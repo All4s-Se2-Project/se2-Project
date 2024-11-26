@@ -14,3 +14,6 @@ class reviewCommand(db.Model, ABC):
     def execute(self):
         #implement in subclasses
         pass
+    
+    def logChange():
+        pass
