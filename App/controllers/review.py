@@ -1,9 +1,22 @@
-from App.models import Review
-from App.database import db
+from App.commands.review import (
+    DisplayReviewCommand,
+    CreateReviewCommand,
+)
 
-# Display review by ID (mapping to displayReview from the diagram)
-def display_review(review_id):
-    review = Review.query.get(review_id)
-    if review:
-        return review.to_json()
-    return {"error": "Review not found"}
+
+class ReviewController:
+    def create_review(self, staff, student, is_positive, rating, points, details):
+        try:
+            command = CreateReviewCommand(staff, student, is_positive, rating, points, details)
+            return command.execute()
+        except ValueError as e:
+            print(f"[ReviewController.create_review] Error: {str(e)}")
+            return None
+
+    def display_review(self, review_id):
+        try:
+            command = DisplayReviewCommand(review_id)
+            return command.execute()
+        except ValueError as e:
+            print(f"[ReviewController.display_review] Error: {str(e)}")
+            return None

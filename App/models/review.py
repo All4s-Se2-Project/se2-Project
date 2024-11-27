@@ -1,45 +1,46 @@
-from App.database import db
-from .student import Student
+from App.database import Base
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime
 from datetime import datetime
 
-class Review(db.Model):
+
+class Review(Base):
     __tablename__ = 'review'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.ID'), nullable=False)
-    created_by_staff_id = db.Column(db.Integer, db.ForeignKey('staff.ID'), nullable=False)
-    is_positive = db.Column(db.Boolean, nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    points = db.Column(db.Integer, nullable=False)
-    details = db.Column(db.String(400), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
-    
 
-    student = db.relationship('Student', backref='reviews', lazy=True)
-    staff = db.relationship('Staff', backref='reviews_given', lazy=True)
+    id = Column(Integer, primary_key=True)
+    student_id = Column(Integer, ForeignKey('student.ID'), nullable=False)
+    created_by_staff_id = Column(Integer, ForeignKey('staff.ID'), nullable=False)
+    is_positive = Column(Boolean, nullable=False)
+    date_created = Column(DateTime, default=datetime.utcnow)
+    points = Column(Integer, nullable=False)
+    details = Column(String(400), nullable=False)
+    rating = Column(Integer, nullable=False)
 
-    def __init__(self, staff, student, rating, points, details, ):
+    student = relationship('Student', backref='reviews', lazy=True)
+    staff = relationship('Staff', backref='reviews_given', lazy=True)
+    rating_commands = relationship("RatingCommand", back_populates="review")
+    commands = relationship("ReviewCommand", back_populates="review")
+    
+    def __init__(self, staff, student, is_positive, rating, points, details):
         self.created_by_staff_id = staff.ID
         self.student_id = student.ID
+        self.is_positive = is_positive
         self.points = points
         self.details = details
         self.date_created = datetime.utcnow()
         self.rating = rating
-        
 
     def get_id(self):
         return self.id
 
-
     def to_json(self):
         return {
             "reviewID": self.id,
-            "reviewer": f"{self.staff.first_name} {self.staff.last_name}",
-            "studentID": self.student.id,
-            "studentName": f"{self.student.first_name} {self.student.last_name}",
+            "reviewer": f"{self.staff.firstname} {self.staff.lastname}",
+            "studentID": self.student.ID,
+            "studentName": f"{self.student.firstname} {self.student.lastname}",
             "created": self.date_created.strftime("%d-%m-%Y %H:%M"),
             "points": self.points,
             "details": self.details,
             "rating": self.rating,
-            
         }
