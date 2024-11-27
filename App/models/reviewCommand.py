@@ -1,19 +1,16 @@
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy import Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship
 from abc import ABC, abstractmethod
 
-Base = declarative_base()
+@as_declarative()
+class Base:
+    id = Column(Integer, primary_key=True)
 
 class reviewCommand(Base, ABC):
-    __abstract__ = True
-
-    id = Column(Integer, primary_key=True)
+    __tablename__ = 'review_command'
+    
     staff_id = Column(Integer, ForeignKey('staff.ID'), nullable=False)
     student_id = Column(Integer, ForeignKey('student.ID'), nullable=False)
-
-    staff = relationship('Staff', backref='reviews')
-    student = relationship('Student', backref='reviews')
 
     @abstractmethod
     def execute(self):
