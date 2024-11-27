@@ -164,3 +164,34 @@ def get_all_history(user_id: int):
 
     except Exception as e:
         return {'error': str(e)}
+
+def get_history_by_date(user_id: int, date_str: str):
+    try:
+        target_date = datetime.strptime(date_str, '%Y-%m-%d')
+
+        user = User.query.get(user_id)
+
+        if not user:
+            return {'error': 'User not found'}
+
+            history_entries = (
+                ReviewCommandHistory.query
+                .filter_by(user_id=user.id)  # Assuming ReviewCommandHistory has a `user_id` field
+                .filter(db.func.date(ReviewCommandHistory.timestamp) == target_date.date())
+                .all()
+            )
+	
+	    history_list = []  
+
+        for entry in history_entries:
+            history_list.append({
+                'id': entry.id,
+                'reviewCommand_id': entry.reviewCommand_id,
+                'timestamp': entry.timestamp
+            })
+        return history_list
+
+    except ValueError:
+        return {'error': 'Invalid date format. Use "YYYY-MM-DD".'}
+    except Exception as e:
+        return {'error': str(e)}
