@@ -12,27 +12,24 @@ class Review(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     points = db.Column(db.Integer, nullable=False)
     details = db.Column(db.String(400), nullable=False)
-    student_seen = db.Column(db.Boolean, default=False, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    
 
     student = db.relationship('Student', backref='reviews', lazy=True)
     staff = db.relationship('Staff', backref='reviews_given', lazy=True)
 
-    def __init__(self, staff, student, is_positive, points, details, student_seen=False):
+    def __init__(self, staff, student, rating, points, details, ):
         self.created_by_staff_id = staff.ID
         self.student_id = student.ID
-        self.is_positive = is_positive
         self.points = points
         self.details = details
         self.date_created = datetime.utcnow()
-        self.student_seen = student_seen
+        self.rating = rating
+        
 
     def get_id(self):
         return self.id
 
-    def mark_as_seen(self):
-        """Mark the review as seen by the student."""
-        self.student_seen = True
-        db.session.commit()
 
     def to_json(self):
         return {
@@ -41,8 +38,8 @@ class Review(db.Model):
             "studentID": self.student.id,
             "studentName": f"{self.student.first_name} {self.student.last_name}",
             "created": self.date_created.strftime("%d-%m-%Y %H:%M"),
-            "isPositive": self.is_positive,
             "points": self.points,
             "details": self.details,
-            "studentSeen": self.student_seen,
+            "rating": self.rating,
+            
         }

@@ -174,3 +174,58 @@ def get_history_by_date(user_id: int, date_str: str):
         return {'error': 'Invalid date format. Use "YYYY-MM-DD".'}
     except Exception as e:
         return {'error': str(e)}
+
+def get_history_by_range(user_id: int, start_date: str, end_date: str):
+    try:
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+        
+        if start_date_obj > end_date_obj:
+            return {'error': 'Start date cannot be after end date.'}
+
+        user = User.query.get(user_id)
+        if not user:
+            return {'error': 'User not found'}
+
+        # Query history within the date range
+        history_entries = ReviewCommandHistory.query.filter_by(user_id=user.id).filter(
+            db.func.date(ReviewCommandHistory.timestamp) >= start_date_obj.date(),
+            db.func.date(ReviewCommandHistory.timestamp) <= end_date_obj.date()
+        ).all()
+
+        history_list = []
+        for entry in history_entries:
+            history_list.append({
+                'id': entry.id,
+                'reviewCommand_id': entry.reviewCommand_id,
+                'timestamp': entry.timestamp
+            })
+
+        return history_list
+    except ValueError:
+        return {'error': 'Invalid date format. Use "YYYY-MM-DD".'}
+    except Exception as e:
+        return {'error': str(e)}
+    
+
+def get_latest_version(user_id: int):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return {'error': 'User not found'}
+
+        # Query the latest entry using descending order by timestamp
+        latest_entry = ReviewCommandHistory.query.filter_by(user_id=user.id).order_by(
+            ReviewCommandHistory.timestamp.desc()
+        ).first()
+
+        if not latest_entry:
+            return {'message': 'No history found for this user'}
+
+        return {
+            'id': latest_entry.id,
+            'reviewCommand_id': latest_entry.reviewCommand_id,
+            'timestamp': latest_entry.timestamp
+        }
+    except Exception as e:
+        return {'error': str(e)}
