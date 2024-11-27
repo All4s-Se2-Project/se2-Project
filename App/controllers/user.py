@@ -1,5 +1,6 @@
-from App.models import User, Student
+from App.models import User, Student, ReviewCommandHistory
 from App.database import db
+from datetime import datetime
 
 def create_user(username, firstname, lastname, password, email, faculty):
     newuser = User(username=username, firstname=firstname ,lastname=lastname, password=password, email=email, faculty=faculty)
@@ -138,3 +139,28 @@ def update_faculty(userID, newFaculty):
     else:
         print("[user.update_faculty] Error occurred while updating student faculty: User "+userID+" not found")
         return False
+
+def get_all_history(user_id: int):
+    try:
+        user = User.query.get(user_id)
+
+        if not user:
+            return {'error': 'User not found'}
+
+        history_entries = (
+                ReviewCommandHistory.query.filter_by(user_id=user.id).all()
+            )
+
+        history_list = []  
+
+        for entry in history_entries:
+            history_list.append({
+                'id': entry.id,
+                'reviewCommand_id': entry.reviewCommand_id,
+                'timestamp': entry.timestamp
+            })
+
+            return history_list
+
+    except Exception as e:
+        return {'error': str(e)}
