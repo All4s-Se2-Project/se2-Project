@@ -1,4 +1,4 @@
-from App.commands.rating import CreateRatingCommand, ExecuteRatingCommand
+from App.commands.rating_commands import CreateRatingCommand, ExecuteRatingCommand
 
 
 class RatingController:
