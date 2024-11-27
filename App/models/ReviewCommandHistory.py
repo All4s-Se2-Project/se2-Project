@@ -1,6 +1,6 @@
 from datetime import datetime
 from App.database import db
-
+from App.models import reviewCommand
 
 class ReviewCommandHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
