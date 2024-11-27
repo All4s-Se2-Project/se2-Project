@@ -9,6 +9,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), nullable=False, unique=True)
     first_name = db.Column(db.String(120), nullable=False)
@@ -38,35 +39,6 @@ class User(db.Model, UserMixin):
         self.email = email
         self.faculty = faculty
         self.set_password(password)
-
-    
-    def login(self):
-        pass
-
-    def logout(self):
-        pass
-
-    def get_all_history(self):
-        return [cmd.to_json() for cmd in self.history.all()]
-
-    def get_history_by_date(self, date):
-        return [
-            cmd.to_json()
-            for cmd in self.history.filter(ReviewCommandHistory.date_created == date)
-        ]
-
-    def get_history_by_range(self, start_date, end_date):
-        return [
-            cmd.to_json()
-            for cmd in self.history.filter(
-                ReviewCommandHistory.date_created.between(start_date, end_date)
-            )
-        ]
-
-    def get_latest_version(self):
-        latest = self.history.order_by(ReviewCommandHistory.date_created.desc()).first()
-        return latest.to_json() if latest else None
-
     
     def set_password(self, password):
         """Create hashed password."""
