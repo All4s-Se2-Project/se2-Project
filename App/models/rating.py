@@ -1,11 +1,14 @@
 from App.database import db
+from .reviewCommand import reviewCommand
 
-class RatingCommand(db.Model):
+class RatingCommand(reviewCommand):
   __tablename__ = 'rating_command' 
   id = db.Column(db.Integer, primary_key=True) 
   review_id = db.Column(db.Integer, db.ForeignKey('review.id'), nullable=False) 
   rating_value = db.Column(db.Integer, nullable=False)
 
+  review= db.relationship("Review", backref="ratingCommand")
+  
   def __init__(self, review_id: int, rating_value: int): 
     self.review_id = review_id 
     self.rating_value = rating_value 
