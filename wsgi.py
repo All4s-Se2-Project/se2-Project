@@ -2,6 +2,7 @@ import click, pytest, sys
 import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
+from App.review_command_history import push, pop
 
 from App.database import db, get_migrate
 from App.main import create_app
@@ -391,3 +392,21 @@ def print_academic_weight(type):
 
 
 app.cli.add_command(test)
+
+
+'''
+History Commands
+'''
+
+history_cli = AppGroup('history', help='Commands for managing review command history')
+
+@history_cli.command("push", help="Push a reviewCommand ID into the history")
+@click.argument("review_command_id", type=int)
+def push_command(review_command_id):
+    try:
+        entry = push(review_command_id)
+        click.echo(f"History pushed: ID={entry.reviewCommand_id}, Timestamp={entry.timestamp}")
+    except Exception as e:
+        click.echo(f"Failed to push history: {e}")
+
+app.cli.add_command(history_cli)
