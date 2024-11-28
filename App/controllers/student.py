@@ -263,3 +263,6 @@ def update_degree(studentID, newDegree):
         "[student.update_degree] Error occurred while updating student degree: Student "
         + str(studentID) + " not found")
     return False
+
+def displayKarma(self):
+    return f"Karma Score: {self.karma}"
