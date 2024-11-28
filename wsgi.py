@@ -409,4 +409,16 @@ def push_command(review_command_id):
     except Exception as e:
         click.echo(f"Failed to push history: {e}")
 
+@history_cli.command("pop", help="Pop the most recent reviewCommand ID from the history")
+@click.argument("review_command_id", type=int)
+def pop_command(review_command_id):
+    try:
+        entry = pop(review_command_id)
+        if entry:
+            click.echo(f"History popped: ID={entry.reviewCommand_id}, Timestamp={entry.timestamp}")
+        else:
+            click.echo(f"No history found for reviewCommand ID {review_command_id}")
+    except Exception as e:
+        click.echo(f"Failed to pop history: {e}")
+
 app.cli.add_command(history_cli)
