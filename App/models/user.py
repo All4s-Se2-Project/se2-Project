@@ -8,8 +8,6 @@ from App.models import ReviewCommandHistory
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
-    
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), nullable=False, unique=True)
     first_name = db.Column(db.String(120), nullable=False)
@@ -17,20 +15,19 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     faculty = db.Column(db.String(120), nullable=False)
+    user_type = db.Column(db.String(50), nullable=False)  # Add this for polymorphism
 
-    
     history = db.relationship(
         "ReviewCommandHistory",
         backref="user",
-        lazy="dynamic",  
+        lazy="dynamic",
         cascade="all, delete-orphan"
     )
 
     __mapper_args__ = {
         "polymorphic_identity": "user",
-        "polymorphic_on": "user_type",
+        "polymorphic_on": user_type,  # Use this field for polymorphic behavior
     }
-
 
     def __init__(self, username, first_name, last_name, password, email, faculty):
         self.username = username
@@ -39,7 +36,7 @@ class User(db.Model, UserMixin):
         self.email = email
         self.faculty = faculty
         self.set_password(password)
-    
+
     def set_password(self, password):
         """Create hashed password."""
         self.password = generate_password_hash(password, method="sha256")
@@ -48,7 +45,6 @@ class User(db.Model, UserMixin):
         """Check hashed password."""
         return check_password_hash(self.password, password)
 
-    
     def to_json(self):
         return {
             "id": self.id,

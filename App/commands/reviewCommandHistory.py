@@ -1,6 +1,6 @@
 from App.database import db
-from App.models.review_command_history import ReviewCommandHistory
-from App.models.review_command import ReviewCommand
+from App.models.ReviewCommandHistory import ReviewCommandHistory
+from App.models.reviewCommand import ReviewCommand
 
 
 class PushReviewCommandHistoryCommand:
