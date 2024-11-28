@@ -2,7 +2,6 @@ import click, pytest, sys
 import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
-from App.review_command_history import push, pop
 
 from App.database import db, get_migrate
 from App.main import create_app
@@ -13,7 +12,7 @@ from App.controllers import (
     analyze_sentiment, get_total_As, get_total_courses_attempted,
     calculate_academic_score, create_review, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma)
+    create_job_recommendation, create_karma, get_karma, push, pop)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
