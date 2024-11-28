@@ -1,3 +1,5 @@
+#removed old methods (staff_edit_review and staff_create_review
+
 from App.models import Staff, Review, Student
 from App.database import db 
 
@@ -48,26 +50,45 @@ def get_staff_by_username(username):
     else:
         return None
 
-def staff_edit_review(id, details):
-    review = get_review(id)
-    if review is None:
-        return False
-    else:
-        review.details = details
-        try:
-            db.session.commit()
-            return True
-        except Exception as e:
-            print("[staff.staff_edit_review] Error occurred while editing review:", str(e))
-            db.session.rollback()
-            return False
+#method for searching student
+def studentSearch(self, username, studentID, faculty, degree):
+    return Student.query.filter_by(
+        username=username, 
+        ID=studentID, 
+        faculty=faculty, 
+        degree=degree
+    ).first()
 
+#method for creating a review
+def createReview(self, reviewType, studentName, teacher, studentID, topic, details, points):
+    review = Review(
+        reviewType=reviewType,
+        studentName=studentName,
+        teacher=teacher,
+        studentID=studentID,
+        topic=topic,
+        details=details,
+        points=points,
+        staffID=self.ID
+    )
+    db.session.add(review)
+    db.session.commit()
+    return review
 
-def staff_create_review(staff, student, isPositive, points, details):
-    if create_review(staff, student, isPositive, points,details):
-        return True
-    else:
-        return False
+#method to add rating
+def addRating(self, ReviewID, rating):
+    review = Review.query.get(ReviewID)
+    if review:
+        review.rating = rating
+        db.session.commit()
+        return review.rating
+    raise ValueError("Review not found.")
 
+#method to delete review
+def deleteReview(self, ReviewID):
+    review = Review.query.get(ReviewID)
 
+    if review:
+        db.session.delete(review)
+        db.session.commit()
 
