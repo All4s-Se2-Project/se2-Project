@@ -444,4 +444,22 @@ def get_all_history_command(user_id):
     except Exception as e:
         click.echo(f"Error fetching history: {e}")
 
+@user_history_cli.command("by_date", help="Get user history entries filtered by date")
+@click.argument("user_id", type=int)
+@click.argument("date", type=str)
+def get_history_by_date_command(user_id, date):
+    """Get history entries for a specific user filtered by a date (YYYY-MM-DD)."""
+    try:
+        history = get_history_by_date(user_id, date)
+        if 'error' in history:
+            click.echo(f"Error: {history['error']}")
+        else:
+            if not history:
+                click.echo(f"No history found for user ID {user_id} on date {date}.")
+            else:
+                for entry in history:
+                    click.echo(f"ID: {entry['id']}, ReviewCommand ID: {entry['reviewCommand_id']}, Timestamp: {entry['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching history by date: {e}")
+        
 app.cli.add_command(user_history_cli)
