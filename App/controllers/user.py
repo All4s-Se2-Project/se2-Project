@@ -122,7 +122,7 @@ def update_password(userID, newPassword):
     else:
         print("[user.update_password] Error occurred while updating user password: User "+userID+" not found")
         return False
-
+#This method updates faculty
 def update_faculty(userID, newFaculty):
     user = get_user(userID)
     if user:
