@@ -27,10 +27,6 @@ class Student(User):
   def get_id(self):
     return self.ID
 
-  def displayKarma(self):
-    return f"Karma Score: {self.karma}"
-
-
   # Gets the student details and returns in JSON format
   def to_json(self):
     return{
