@@ -12,7 +12,7 @@ from App.controllers import (
     analyze_sentiment, get_total_As, get_total_courses_attempted,
     calculate_academic_score, create_review, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma, push, pop)
+    create_job_recommendation, create_karma, get_karma, push, pop,get_all_history)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -421,3 +421,27 @@ def pop_command(review_command_id):
         click.echo(f"Failed to pop history: {e}")
 
 app.cli.add_command(history_cli)
+
+'''
+User Commands
+'''
+
+user_history_cli = AppGroup('user_history', help='Commands for managing user history')
+
+@user_history_cli.command("all_history", help="Get all history entries for a user")
+@click.argument("user_id", type=int)
+def get_all_history_command(user_id):
+    try:
+        history = get_all_history(user_id)
+        if 'error' in history:
+            click.echo(f"Error: {history['error']}")
+        else:
+            if not history:
+                click.echo(f"No history found for user ID {user_id}.")
+            else:
+                for entry in history:
+                    click.echo(f"ID: {entry['id']}, ReviewCommand ID: {entry['reviewCommand_id']}, Timestamp: {entry['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching history: {e}")
+
+app.cli.add_command(user_history_cli)
