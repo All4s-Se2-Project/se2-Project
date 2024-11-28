@@ -21,49 +21,7 @@ class Staff(User):
             password=password,
             faculty=faculty
         )
-    
-    #method for searching student
-   def studentSearch(self, username, studentID, faculty, degree):
-        return Student.query.filter_by(
-            username=username, 
-            ID=studentID, 
-            faculty=faculty, 
-            degree=degree
-        ).first()
-    
-    #method for creating a review
-    def createReview(self, reviewType, studentName, teacher, studentID, topic, details, points):
-        review = Review(
-            reviewType=reviewType,
-            studentName=studentName,
-            teacher=teacher,
-            studentID=studentID,
-            topic=topic,
-            details=details,
-            points=points,
-            staffID=self.ID
-        )
-        db.session.add(review)
-        db.session.commit()
-        return review
-
-    #method to add rating
-    def addRating(self, ReviewID, rating):
-        review = Review.query.get(ReviewID)
-        if review:
-            review.rating = rating
-            db.session.commit()
-            return review.rating
-        raise ValueError("Review not found.")
-
-    #method to delete review
-    def deleteReview(self, ReviewID):
-        review = Review.query.get(ReviewID)
         
-        if review:
-            db.session.delete(review)
-            db.session.commit()
-
     def to_json(self) -> dict:
         return {
             "staffID": self.id,
