@@ -5,7 +5,7 @@ from App.models.user import User
 
 class Staff(User):
     __tablename__ = 'staff'
-    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     reviews = relationship('Review', backref='staffReviews', lazy='joined')
     reports = relationship('IncidentReport', backref='staffReports', lazy='joined')
     pending_accomplishments = relationship(
