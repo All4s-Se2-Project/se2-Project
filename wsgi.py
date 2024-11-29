@@ -3,6 +3,7 @@ import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
 
+from App.controllers.user import get_history_by_date, get_history_by_range, get_latest_version
 from App.database import db, get_migrate
 from App.main import create_app
 from App.models import Student, Karma
