@@ -35,3 +35,4 @@ class Staff(User):
 
     def __repr__(self):
         return f'<Staff {self.id}: {self.email}>'
+ 

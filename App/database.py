@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from sqlalchemy.orm import declarative_base
 
 db = SQLAlchemy()
-
+Base = declarative_base()
 def get_migrate(app):
     return Migrate(app, db)
 

@@ -1,34 +1,31 @@
-from App.models import ReviewCommandHistory, db
-from datetime import datetime
+from App.commands.reviewCommandHistory import (
+    PushReviewCommandHistoryCommand,
+    PopReviewCommandHistoryCommand,
+    UndoReviewCommand,
+)
 
-def push(reviewCommand_id: int):
-    try:
-        history_entry = ReviewCommandHistory(reviewCommand_id=reviewCommand_id)
-        db.session.add(history_entry)
-        db.session.commit()
-        return history_entry
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error pushing history: {e}")
-        raise
 
-def pop(reviewCommand_id: int):
-    try:
-        history_entry = (
-            ReviewCommandHistory.query
-            .filter_by(reviewCommand_id=reviewCommand_id)
-            .order_by(ReviewCommandHistory.timestamp.desc())
-            .first()
-        )
-
-        if not history_entry:
-            print(f"No history found for reviewCommand_id {reviewCommand_id}")
+class ReviewCommandHistoryController:
+    def push_review_command_history(self, review_command_id: int):
+        try:
+            command = PushReviewCommandHistoryCommand(review_command_id)
+            return command.execute()
+        except ValueError as e:
+            print(f"[ReviewCommandHistoryController.push] Error: {str(e)}")
             return None
 
-        db.session.delete(history_entry)
-        db.session.commit()
-        return history_entry
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error popping history: {e}")
-        raise
+    def pop_review_command_history(self, review_command_id: int):
+        try:
+            command = PopReviewCommandHistoryCommand(review_command_id)
+            return command.execute()
+        except ValueError as e:
+            print(f"[ReviewCommandHistoryController.pop] Error: {str(e)}")
+            return None
+
+    def undo_review_command(self, review_command_id: int):
+        try:
+            command = UndoReviewCommand(review_command_id)
+            return command.execute()
+        except ValueError as e:
+            print(f"[ReviewCommandHistoryController.undo] Error: {str(e)}")
+            return None

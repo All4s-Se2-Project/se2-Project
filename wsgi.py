@@ -3,6 +3,8 @@ import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
 
+from App.controllers.review import ReviewController
+from App.controllers.user import get_history_by_date, get_history_by_range, get_latest_version
 from App.database import db, get_migrate
 from App.main import create_app
 from App.models import Student, Karma
@@ -12,7 +14,7 @@ from App.controllers import (
     analyze_sentiment, get_total_As, get_total_courses_attempted,
     calculate_academic_score, create_review, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma)
+    create_job_recommendation, create_karma, get_karma, push, pop,get_all_history)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -391,3 +393,143 @@ def print_academic_weight(type):
 
 
 app.cli.add_command(test)
+
+
+'''
+History Commands
+'''
+
+history_cli = AppGroup('history', help='Commands for managing review command history')
+
+@history_cli.command("push", help="Push a reviewCommand ID into the history")
+@click.argument("review_command_id", type=int)
+def push_command(review_command_id):
+    try:
+        entry = push(review_command_id)
+        click.echo(f"History pushed: ID={entry.reviewCommand_id}, Timestamp={entry.timestamp}")
+    except Exception as e:
+        click.echo(f"Failed to push history: {e}")
+
+@history_cli.command("pop", help="Pop the most recent reviewCommand ID from the history")
+@click.argument("review_command_id", type=int)
+def pop_command(review_command_id):
+    try:
+        entry = pop(review_command_id)
+        if entry:
+            click.echo(f"History popped: ID={entry.reviewCommand_id}, Timestamp={entry.timestamp}")
+        else:
+            click.echo(f"No history found for reviewCommand ID {review_command_id}")
+    except Exception as e:
+        click.echo(f"Failed to pop history: {e}")
+
+app.cli.add_command(history_cli)
+
+'''
+User Commands
+'''
+
+user_history_cli = AppGroup('user_history', help='Commands for managing user history')
+
+@user_history_cli.command("all_history", help="Get all history entries for a user")
+@click.argument("user_id", type=int)
+def get_all_history_command(user_id):
+    try:
+        history = get_all_history(user_id)
+        if 'error' in history:
+            click.echo(f"Error: {history['error']}")
+        else:
+            if not history:
+                click.echo(f"No history found for user ID {user_id}.")
+            else:
+                for entry in history:
+                    click.echo(f"ID: {entry['id']}, ReviewCommand ID: {entry['reviewCommand_id']}, Timestamp: {entry['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching history: {e}")
+
+@user_history_cli.command("by_date", help="Get user history entries filtered by date")
+@click.argument("user_id", type=int)
+@click.argument("date", type=str)
+def get_history_by_date_command(user_id, date):
+    """Get history entries for a specific user filtered by a date (YYYY-MM-DD)."""
+    try:
+        history = get_history_by_date(user_id, date)
+        if 'error' in history:
+            click.echo(f"Error: {history['error']}")
+        else:
+            if not history:
+                click.echo(f"No history found for user ID {user_id} on date {date}.")
+            else:
+                for entry in history:
+                    click.echo(f"ID: {entry['id']}, ReviewCommand ID: {entry['reviewCommand_id']}, Timestamp: {entry['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching history by date: {e}")
+
+@user_history_cli.command("by_range", help="Get user history entries within a date range")
+@click.argument("user_id", type=int)
+@click.argument("start_date", type=str)
+@click.argument("end_date", type=str)
+def get_history_by_range_command(user_id, start_date, end_date):
+    """Get history entries for a specific user filtered by a date range (YYYY-MM-DD to YYYY-MM-DD)."""
+    try:
+        history = get_history_by_range(user_id, start_date, end_date)
+        if 'error' in history:
+            click.echo(f"Error: {history['error']}")
+        else:
+            if not history:
+                click.echo(f"No history found for user ID {user_id} in the range {start_date} to {end_date}.")
+            else:
+                for entry in history:
+                    click.echo(f"ID: {entry['id']}, ReviewCommand ID: {entry['reviewCommand_id']}, Timestamp: {entry['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching history by range: {e}")
+
+@user_history_cli.command("latest_version", help="Get the latest history entry for a user")
+@click.argument("user_id", type=int)
+def get_latest_version_command(user_id):
+    """Get the latest history entry for a specific user."""
+    try:
+        latest = get_latest_version(user_id)
+        if 'error' in latest:
+            click.echo(f"Error: {latest['error']}")
+        elif 'message' in latest:
+            click.echo(latest['message'])
+        else:
+            click.echo(f"ID: {latest['id']}, ReviewCommand ID: {latest['reviewCommand_id']}, Timestamp: {latest['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching latest history entry: {e}")
+
+app.cli.add_command(user_history_cli)
+
+@app.cli.command('display_review')
+@click.argument('review_id')
+def display_review_cli(review_id):
+    """
+    CLI command to display review by its ID.
+    Usage: flask display_review <review_id>
+    """
+    controller = ReviewController()  # Initialize the ReviewController
+    result = controller.display_review(review_id)  # Call the method to display the review
+
+    if result:
+        print(f"Review displayed successfully: {result}")
+    else:
+        print("Failed to display review.")
+
+@app.cli.command('calculate_karma')
+@click.argument('review_id')
+@click.argument('star_rating', type=int)  # Ensuring that star_rating is an integer
+def calculate_karma_cli(review_id, star_rating):
+    """
+    CLI command to calculate karma for a student based on a review ID and star rating.
+    Usage: flask calculate_karma <review_id> <star_rating>
+    """
+    print(f"Calculating karma for Review ID: {review_id} with Star Rating: {star_rating}")
+    new_karma = calculateKarma(review_id, star_rating)  # Calling the calculateKarma function
+
+    if new_karma is not None:
+        print(f"Karma updated successfully. New Karma: {new_karma}")
+    else:
+        print("Failed to update karma.")
+
+if __name__ == "__main__":
+    app.run()
