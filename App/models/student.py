@@ -5,7 +5,7 @@ from App.models.user import User
 
 class Student(User):
     __tablename__ = 'student'
-    id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    id = Column(Integer, ForeignKey("user.id"), primary_key=True)
     uni_id = Column(String(10), nullable=False)
     degree = Column(String(120), nullable=False)
     full_name = Column(String(255), nullable=True)

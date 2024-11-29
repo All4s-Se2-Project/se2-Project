@@ -461,5 +461,42 @@ def get_history_by_date_command(user_id, date):
                     click.echo(f"ID: {entry['id']}, ReviewCommand ID: {entry['reviewCommand_id']}, Timestamp: {entry['timestamp']}")
     except Exception as e:
         click.echo(f"Error fetching history by date: {e}")
-        
+
+@user_history_cli.command("by_range", help="Get user history entries within a date range")
+@click.argument("user_id", type=int)
+@click.argument("start_date", type=str)
+@click.argument("end_date", type=str)
+def get_history_by_range_command(user_id, start_date, end_date):
+    """Get history entries for a specific user filtered by a date range (YYYY-MM-DD to YYYY-MM-DD)."""
+    try:
+        history = get_history_by_range(user_id, start_date, end_date)
+        if 'error' in history:
+            click.echo(f"Error: {history['error']}")
+        else:
+            if not history:
+                click.echo(f"No history found for user ID {user_id} in the range {start_date} to {end_date}.")
+            else:
+                for entry in history:
+                    click.echo(f"ID: {entry['id']}, ReviewCommand ID: {entry['reviewCommand_id']}, Timestamp: {entry['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching history by range: {e}")
+
+@user_history_cli.command("latest_version", help="Get the latest history entry for a user")
+@click.argument("user_id", type=int)
+def get_latest_version_command(user_id):
+    """Get the latest history entry for a specific user."""
+    try:
+        latest = get_latest_version(user_id)
+        if 'error' in latest:
+            click.echo(f"Error: {latest['error']}")
+        elif 'message' in latest:
+            click.echo(latest['message'])
+        else:
+            click.echo(f"ID: {latest['id']}, ReviewCommand ID: {latest['reviewCommand_id']}, Timestamp: {latest['timestamp']}")
+    except Exception as e:
+        click.echo(f"Error fetching latest history entry: {e}")
+
 app.cli.add_command(user_history_cli)
+
+if __name__ == "__main__":
+    app.run()

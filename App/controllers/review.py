@@ -2,6 +2,7 @@ from App.commands.review import (
     DisplayReviewCommand,
     CreateReviewCommand,
 )
+from App.controllers.review import get_total_review_points
 
 
 class ReviewController:
