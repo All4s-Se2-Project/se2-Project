@@ -499,5 +499,20 @@ def get_latest_version_command(user_id):
 
 app.cli.add_command(user_history_cli)
 
+@app.cli.command('display_review')
+@click.argument('review_id')
+def display_review_cli(review_id):
+    """
+    CLI command to display review by its ID.
+    Usage: flask display_review <review_id>
+    """
+    controller = ReviewController()  # Initialize the ReviewController
+    result = controller.display_review(review_id)  # Call the method to display the review
+
+    if result:
+        print(f"Review displayed successfully: {result}")
+    else:
+        print("Failed to display review.")
+
 if __name__ == "__main__":
     app.run()
