@@ -47,3 +47,32 @@ def calculatePoints(star_rating):
     }
     return stars.get(star_rating, None)  
 
+def execute():
+   
+    review = Review.query.order_by(Review.date_created.desc()).first()  
+    if review is None:
+        print("[rating.execute] No reviews found.")
+        return
+
+    rating_command = RatingCommand.query.filter_by(review_id=review.id).first()
+    if rating_command is None:
+        print("[rating.execute] No rating found for this review.")
+        return
+
+    points = calculatePoints(rating_command.rating_value)
+    if points is None:
+        print("[rating.execute] Invalid star rating provided.")
+        return  
+
+    student = Student.query.filter_by(id=review.student_id).first()
+    if student is None:
+        print(f"[rating.execute] Student with ID {review.student_id} not found.")
+        return 
+
+    try:
+        student.karma += points
+        db.session.commit()
+        print(f"[rating.execute] Updated karma for Student ID {student.id} to {student.karma}.")
+    except Exception as e:
+        print(f"[rating.execute] Error while updating karma: {str(e)}")
+        db.session.rollback()
