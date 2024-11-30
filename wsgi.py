@@ -3,6 +3,7 @@ import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
 
+from App.controllers.rating import RatingController, calculateKarma
 from App.controllers.review import ReviewController
 from App.controllers.user import get_history_by_date, get_history_by_range, get_latest_version
 from App.database import db, get_migrate
@@ -14,7 +15,7 @@ from App.controllers import (
     analyze_sentiment, get_total_As, get_total_courses_attempted,
     calculate_academic_score, create_review, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma, push, pop,get_all_history)
+    create_job_recommendation, create_karma, get_karma, push, pop,get_all_history, rating)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -530,6 +531,53 @@ def calculate_karma_cli(review_id, star_rating):
         print(f"Karma updated successfully. New Karma: {new_karma}")
     else:
         print("Failed to update karma.")
+
+
+'''
+Rating Commands
+'''
+
+rating_cli = AppGroup('rating', help='Commands for managing ratings')
+
+
+@rating_cli.command("execute", help="Execute a pending rating command")
+def execute_rating_command():
+  
+    controller = RatingController()  
+    result = controller.execute()  
+    if result:
+        print(f"Rating command executed successfully. ID: {result.id}, Review ID: {result.review_id}")
+    else:
+        print("Failed to execute rating command or no pending command found.")
+
+
+@rating_cli.command("log_change", help="Log changes for a rating command")
+def log_change_rating_command():
+    controller = RatingController()  
+    result = controller.logChange()  
+    if result:
+        print(f"Changes logged successfully for RatingCommand ID: {result.id}")
+    else:
+        print("Failed to log changes or no executed command found.")
+
+
+@rating_cli.command("calculate_karma", help="Calculate karma for a student based on review and star rating")
+@click.argument("review_id", type=int)
+@click.argument("star_rating", type=int)
+def calculate_karma_cli(review_id, star_rating):
+   
+    print(f"Calculating karma for Review ID: {review_id} with Star Rating: {star_rating}")
+    new_karma = calculateKarma(review_id, star_rating)  
+
+    if new_karma is not None:
+        print(f"Karma updated successfully. New Karma: {new_karma}")
+    else:
+        print("Failed to update karma.")
+
+
+
+app.cli.add_command(rating_cli)
+
 
 if __name__ == "__main__":
     app.run()
