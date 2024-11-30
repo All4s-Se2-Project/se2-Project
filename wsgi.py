@@ -5,6 +5,7 @@ from flask.cli import with_appcontext, AppGroup
 
 from App.controllers.rating import RatingController, calculateKarma
 from App.controllers.review import ReviewController
+from App.controllers.reviewCommand import ReviewCommandController
 from App.controllers.user import get_history_by_date, get_history_by_range, get_latest_version
 from App.database import db, get_migrate
 from App.main import create_app
@@ -577,6 +578,39 @@ def calculate_karma_cli(review_id, star_rating):
 
 
 app.cli.add_command(rating_cli)
+
+'''
+Review Command CLI Commands
+'''
+
+review_command_cli = AppGroup('review_command', help='Commands for managing review commands')
+
+
+@review_command_cli.command("execute", help="Execute the most recent review command")
+def execute_review_command():
+    
+    controller = ReviewCommandController() 
+    result = controller.execute()  
+    if result:
+        print(f"ReviewCommand executed successfully. ID: {result.id}")
+    else:
+        print("Failed to execute review command or no command found.")
+
+
+@review_command_cli.command("log_change", help="Log changes for the most recent review command")
+def log_change_review_command():
+   
+    controller = ReviewCommandController()  
+    result = controller.logChange() 
+    if result:
+        print(f"Changes logged successfully for ReviewCommand ID: {result.id}")
+    else:
+        print("Failed to log changes or no command found.")
+
+
+
+app.cli.add_command(review_command_cli)
+
 
 
 if __name__ == "__main__":
