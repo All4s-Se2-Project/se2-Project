@@ -3,6 +3,7 @@ import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
 
+from App.controllers.review import ReviewController
 from App.controllers.user import get_history_by_date, get_history_by_range, get_latest_version
 from App.database import db, get_migrate
 from App.main import create_app
@@ -498,6 +499,37 @@ def get_latest_version_command(user_id):
         click.echo(f"Error fetching latest history entry: {e}")
 
 app.cli.add_command(user_history_cli)
+
+@app.cli.command('display_review')
+@click.argument('review_id')
+def display_review_cli(review_id):
+    """
+    CLI command to display review by its ID.
+    Usage: flask display_review <review_id>
+    """
+    controller = ReviewController()  # Initialize the ReviewController
+    result = controller.display_review(review_id)  # Call the method to display the review
+
+    if result:
+        print(f"Review displayed successfully: {result}")
+    else:
+        print("Failed to display review.")
+
+@app.cli.command('calculate_karma')
+@click.argument('review_id')
+@click.argument('star_rating', type=int)  # Ensuring that star_rating is an integer
+def calculate_karma_cli(review_id, star_rating):
+    """
+    CLI command to calculate karma for a student based on a review ID and star rating.
+    Usage: flask calculate_karma <review_id> <star_rating>
+    """
+    print(f"Calculating karma for Review ID: {review_id} with Star Rating: {star_rating}")
+    new_karma = calculateKarma(review_id, star_rating)  # Calling the calculateKarma function
+
+    if new_karma is not None:
+        print(f"Karma updated successfully. New Karma: {new_karma}")
+    else:
+        print("Failed to update karma.")
 
 if __name__ == "__main__":
     app.run()
