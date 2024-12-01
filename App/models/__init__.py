@@ -12,3 +12,5 @@ from .transcript import *
 from .schoolRecommendation import *
 from .jobRecommendation import *
 from .badges import *
+from .reviewCommand import *
+from .ReviewCommandHistory import *

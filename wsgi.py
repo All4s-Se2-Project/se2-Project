@@ -14,9 +14,12 @@ from App.controllers import (
     create_student, create_staff, create_admin, get_all_users_json,
     get_all_users, get_transcript, get_student_by_UniId, setup_nltk,
     analyze_sentiment, get_total_As, get_total_courses_attempted,
-    calculate_academic_score, create_review, create_incident_report,
+    calculate_academic_score, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma, push, pop,get_all_history, rating)
+    create_job_recommendation, create_karma, get_karma, get_all_history, rating)
+'''push, pop,'''
+'''create_review,'''
+from App.controllers.review import ReviewController
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -36,55 +39,45 @@ def initialize():
                  email="billy@example.com",
                  password="billypass",
                  faculty="FST",
-                 admittedTerm="",
                  UniId='816031160',
-                 degree="",
-                 gpa="")
+                 degree="")
 
   create_student(username="shivum",
+                 UniId='816016480',
                  firstname="Shivum",
                  lastname="Praboocharan",
                  email="shivum.praboocharan@my.uwi.edu",
                  password="shivumpass",
                  faculty="FST",
-                 admittedTerm="2019/2021",
-                 UniId='816016480',
-                 degree="Bachelor of Computer Science with Management",
-                 gpa='')
+                 degree="Bachelor of Computer Science with Management")
 
   create_student(username="jovani",
+                 UniId='816026834',
                  firstname="Jovani",
                  lastname="Highley",
                  email="jovani.highley@my.uwi.edu",
                  password="jovanipass",
                  faculty="FST",
-                 admittedTerm="2021/2022",
-                 UniId='816026834',
-                 degree="Bachelor of Computer Science with Management",
-                 gpa='')
+                 degree="Bachelor of Computer Science with Management")
 
   create_student(username="kasim",
+                 UniId='816030847',
                  firstname="Kasim",
                  lastname="Taylor",
                  email="kasim.taylor@my.uwi.edu",
                  password="kasimpass",
                  faculty="FST",
-                 admittedTerm="2019/2021",
-                 UniId='816030847',
-                 degree="Bachelor of Computer Science (General",
-                 gpa='')
+                 degree="Bachelor of Computer Science (General")
 
   create_student(username="brian",
+                 UniId='816031609',
                  firstname="Brian",
                  lastname="Cheruiyot",
                  email="brian.cheruiyot@my.uwi.edu",
                  password="brianpass",
                  faculty="FST",
-                 admittedTerm="2021/2022",
-                 UniId='816031609',
-                 degree="Bachelor of Computer Science (General)",
-                 gpa="")
-
+                 degree="Bachelor of Computer Science (General)")
+  
   #Creating staff
   create_staff(username="tim",
                firstname="Tim",
@@ -119,17 +112,18 @@ def initialize():
                         "I placed first at runtime.", 0, "None Yet")
   create_accomplishment(2, False, "Vijayanandh Rajamanickam", "Runtime",
                         "I placed first at runtime.", 0, "None Yet")
-
+  
   staff = get_staff_by_id(7)
   student1 = get_student_by_UniId(816031609)
-  create_review(staff, student1, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student1, True, 5, 50, "Behaves very well in class!")
 
   student2 = get_student_by_UniId(816016480)
-  create_review(staff, student2, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student2, True, 5,50, "Behaves very well in class!")
   student3 = get_student_by_UniId(816026834)
-  create_review(staff, student3, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student3, True, 5, 50, "Behaves very well in class!")
   student4 = get_student_by_UniId(816030847)
-  create_review(staff, student4, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student4, True, 5, 50,  "Behaves very well in class!")
+  
   create_admin(username="admin",
                firstname="Admin",
                lastname="Admin",
@@ -403,6 +397,7 @@ History Commands
 
 history_cli = AppGroup('history', help='Commands for managing review command history')
 
+'''
 @history_cli.command("push", help="Push a reviewCommand ID into the history")
 @click.argument("review_command_id", type=int)
 def push_command(review_command_id):
@@ -411,7 +406,8 @@ def push_command(review_command_id):
         click.echo(f"History pushed: ID={entry.reviewCommand_id}, Timestamp={entry.timestamp}")
     except Exception as e:
         click.echo(f"Failed to push history: {e}")
-
+'''
+'''
 @history_cli.command("pop", help="Pop the most recent reviewCommand ID from the history")
 @click.argument("review_command_id", type=int)
 def pop_command(review_command_id):
@@ -425,7 +421,7 @@ def pop_command(review_command_id):
         click.echo(f"Failed to pop history: {e}")
 
 app.cli.add_command(history_cli)
-
+'''
 '''
 User Commands
 '''

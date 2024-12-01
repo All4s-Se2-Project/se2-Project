@@ -1,9 +1,11 @@
 from App.models import Karma
 from App.database import db
-from .review import (get_total_review_points)
+#from .review import (get_total_review_points)
 from .accomplishment import (get_total_accomplishment_points)
 from .incidentReport import (get_total_incident_points)
 from .transcript import (calculate_academic_score)
+
+from App.controllers.review import ReviewController
 
 
 def get_karma(studentID):
@@ -41,7 +43,7 @@ def create_karma(studentID):
 
 def calculate_review_points(studentID):
   karma = get_karma(studentID)
-  review_points = get_total_review_points(studentID)
+  review_points = ReviewController.get_total_review_points(studentID)
   if karma:
     karma.reviewsPoints = review_points
     db.session.commit()

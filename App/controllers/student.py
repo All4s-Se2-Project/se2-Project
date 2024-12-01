@@ -3,9 +3,9 @@ from App.database import db
 
 
 def create_student(username, UniId, firstname, lastname, email, password,
-                   faculty, admittedTerm, degree, gpa):
-  newStudent = Student(username, UniId, firstname, lastname, email, password,
-                       faculty, admittedTerm, degree, gpa)
+                   faculty, degree):
+  test=newStudent = Student(username, UniId, firstname, lastname, email, password,
+                       faculty, degree)
   db.session.add(newStudent)
   try:
     db.session.commit()

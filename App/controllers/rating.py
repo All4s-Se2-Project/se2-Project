@@ -4,7 +4,7 @@ from App.models.rating import RatingCommand
 from App.models import Review
 from App.models import Student
 from App.database import db
-from App.models import Rating
+from App.models import rating
 
 
 

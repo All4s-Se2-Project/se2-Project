@@ -2,7 +2,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from App.database import db
 from abc import ABC
-from App.models import ReviewCommandHistory
+#from App.models import ReviewCommandHistory
 
 
 class User(db.Model, UserMixin):
@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), nullable=False, unique=True)
     faculty = db.Column(db.String(120), nullable=False)
     user_type = db.Column(db.String(50), nullable=False)  # Add this for polymorphism
-
+    
     history = db.relationship(
         "ReviewCommandHistory",
         backref="user",
@@ -24,15 +24,17 @@ class User(db.Model, UserMixin):
         cascade="all, delete-orphan"
     )
 
+
+
     __mapper_args__ = {
         "polymorphic_identity": "user",
         "polymorphic_on": user_type,  # Use this field for polymorphic behavior
     }
 
-    def __init__(self, username, first_name, last_name, password, email, faculty):
+    def __init__(self, username, firstname, lastname, email, password, faculty):
         self.username = username
-        self.first_name = first_name
-        self.last_name = last_name
+        self.first_name = firstname
+        self.last_name = lastname
         self.email = email
         self.faculty = faculty
         self.set_password(password)

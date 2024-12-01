@@ -2,9 +2,10 @@ from datetime import datetime
 from App.database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from App.models import db
 
 
-class ReviewCommand(Base):
+class ReviewCommand(db.Model): #change Base to db.Model
     __tablename__ = 'review_command'
 
     id = Column(Integer, primary_key=True)
@@ -13,8 +14,8 @@ class ReviewCommand(Base):
     executed_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    review = relationship("Review", back_populates="commands")
     history = relationship("ReviewCommandHistory", back_populates="review_command")
+    review= relationship("Review", back_populates= "commands")
 
     def __init__(self, review_id: int, command_type: str):
         self.review_id = review_id

@@ -7,17 +7,22 @@ from App.models.reviewCommand import ReviewCommand
 class RatingCommand(ReviewCommand):
     __tablename__ = 'rating_command'
 
-    id = Column(Integer, primary_key=True)
-    review_id = Column(Integer, ForeignKey("review.id"), nullable=False)
+    id = Column(Integer, ForeignKey("review_command.id"), primary_key=True)
+    #review_id = Column(Integer, ForeignKey("review.id"), nullable=False)
     rating_value = Column(Integer, nullable=False)
 
-    review = relationship("Review", back_populates="rating_commands")
+    #added
+    review = relationship(
+        "Review",
+        back_populates="rating_commands",
+        overlaps="commands"
+    )
 
     __mapper_args__ = {"polymorphic_identity": "rating_command"}
 
     def __init__(self, review_id: int, rating_value: int):
-        super().__init__()
-        self.review_id = review_id
+        super().__init__(review_id=review_id, command_type="rating_command")
+        #self.review_id = review_id
         self.rating_value = rating_value
 
     def to_json(self):

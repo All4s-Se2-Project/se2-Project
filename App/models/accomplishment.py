@@ -8,7 +8,7 @@ class Accomplishment(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   verified = db.Column(db.Boolean, nullable=False)
   topic = db.Column(db.String(400), nullable=False)
-  taggedStaffId = db.Column(db.Integer, db.ForeignKey('staff.ID'))
+  taggedStaffId = db.Column(db.Integer, db.ForeignKey('staff.id'))
   createdByStudentID = db.Column(db.Integer, db.ForeignKey('student.ID'))
   uniID = db.Column(db.Integer, nullable=False)
   studentName = db.Column(db.String(40), nullable=False)
@@ -21,7 +21,7 @@ class Accomplishment(db.Model):
                status, studentSeen):
     self.createdByStudentID = student.ID
     self.uniID = student.UniId
-    self.studentName = f"{student.firstname} {student.lastname}"
+    self.studentName = student.full_name
     self.verified = verified
     self.topic = topic
     self.taggedStaffId = taggedStaffId

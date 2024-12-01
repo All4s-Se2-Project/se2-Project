@@ -3,10 +3,11 @@
 from App.models import Staff, Review, Student
 from App.database import db 
 
-from .review import (
+'''from .review import (
     create_review,
     get_review
 )
+'''
 from .student import(
     get_student_by_id,
     get_student_by_username,
@@ -30,14 +31,14 @@ def create_staff(username,firstname, lastname, email, password, faculty):
     
 
 def get_staff_by_id(id):
-    staff = Staff.query.filter_by(ID=id).first()
+    staff = Staff.query.filter_by(id=id).first()
     if staff:
         return staff
     else:
         return None
 
 def get_staff_by_name(firstname, lastname):
-  staff = Staff.query.filter_by(firstname=firstname, lastname=lastname).first()
+  staff = Staff.query.filter_by(first_name=firstname, last_name=lastname).first()
   if staff:
       return staff
   else:
