@@ -2,6 +2,8 @@ import click, pytest, sys
 import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
+from App.controllers.rating import calculateKarma
+
 
 from App.controllers.rating import RatingController, calculateKarma
 from App.controllers.review import ReviewController
@@ -17,6 +19,16 @@ from App.controllers import (
     calculate_academic_score, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
     create_job_recommendation, create_karma, get_karma, get_all_history, rating)
+
+from flask.cli import AppGroup
+from App.controllers.user import (
+    create_user,
+    get_user,
+    get_all_users,
+    update_user_username,
+)
+
+
 '''push, pop,'''
 '''create_review,'''
 from App.controllers.review import ReviewController
@@ -27,7 +39,7 @@ app = create_app()
 migrate = get_migrate(app)
 
 
-# This command creates and initializes the database
+
 @app.cli.command("init", help="Creates and initializes the database")
 def initialize():
   db.drop_all()
@@ -313,7 +325,7 @@ def nltk_tests_command(type):
 @test.command("print", help="print get_transcript")
 @click.argument("type", default="all")
 def print_transcript(type):
-  studentID = input("Enter student ID: ")  # Prompt user to enter student ID
+  studentID = input("Enter student ID: ")  
   transcripts = get_transcript(
       studentID)  # Get transcript data for the student
   if transcripts:
@@ -448,7 +460,7 @@ def get_all_history_command(user_id):
 @click.argument("user_id", type=int)
 @click.argument("date", type=str)
 def get_history_by_date_command(user_id, date):
-    """Get history entries for a specific user filtered by a date (YYYY-MM-DD)."""
+    
     try:
         history = get_history_by_date(user_id, date)
         if 'error' in history:
@@ -467,7 +479,7 @@ def get_history_by_date_command(user_id, date):
 @click.argument("start_date", type=str)
 @click.argument("end_date", type=str)
 def get_history_by_range_command(user_id, start_date, end_date):
-    """Get history entries for a specific user filtered by a date range (YYYY-MM-DD to YYYY-MM-DD)."""
+
     try:
         history = get_history_by_range(user_id, start_date, end_date)
         if 'error' in history:
@@ -501,33 +513,30 @@ app.cli.add_command(user_history_cli)
 @app.cli.command('display_review')
 @click.argument('review_id')
 def display_review_cli(review_id):
-    """
-    CLI command to display review by its ID.
-    Usage: flask display_review <review_id>
-    """
-    controller = ReviewController()  # Initialize the ReviewController
-    result = controller.display_review(review_id)  # Call the method to display the review
+    
+    controller = ReviewController()  
+    result = controller.display_review(review_id) 
 
     if result:
         print(f"Review displayed successfully: {result}")
     else:
         print("Failed to display review.")
 
-@app.cli.command('calculate_karma')
-@click.argument('review_id')
-@click.argument('star_rating', type=int)  # Ensuring that star_rating is an integer
+@app.cli.command('calculate_karma', help='Calculate karma for a student based on a review')
+@click.argument('review_id', type=int)
+@click.argument('star_rating', type=int)
 def calculate_karma_cli(review_id, star_rating):
-    """
-    CLI command to calculate karma for a student based on a review ID and star rating.
-    Usage: flask calculate_karma <review_id> <star_rating>
-    """
+   
     print(f"Calculating karma for Review ID: {review_id} with Star Rating: {star_rating}")
-    new_karma = calculateKarma(review_id, star_rating)  # Calling the calculateKarma function
+    try:
+        new_karma = calculateKarma(review_id, star_rating)  
+        if new_karma is not None:
+            print(f"Karma updated successfully. New Karma: {new_karma}")
+        else:
+            print("Failed to calculate karma.")
+    except Exception as e:
+        print(f"Error during karma calculation: {e}")
 
-    if new_karma is not None:
-        print(f"Karma updated successfully. New Karma: {new_karma}")
-    else:
-        print("Failed to update karma.")
 
 
 '''

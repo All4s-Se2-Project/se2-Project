@@ -9,7 +9,7 @@ class Review(db.Model):
     __tablename__ = 'review'
 
     id = Column(Integer, primary_key=True)
-    student_id = Column(Integer, ForeignKey('student.ID'), nullable=False)
+    student_id = Column(Integer, ForeignKey('student.id'), nullable=False)
     created_by_staff_id = Column(Integer, ForeignKey('staff.id'), nullable=False)
     is_positive = Column(Boolean, nullable=False)
     date_created = Column(DateTime, default=datetime.utcnow)
