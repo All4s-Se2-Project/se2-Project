@@ -15,7 +15,7 @@ class ReviewCommand(db.Model): #change Base to db.Model
 
     # Relationships
     history = relationship("ReviewCommandHistory", back_populates="review_command")
-    review= relationship("Review", back_populates= "commands")
+    review= relationship("Review", back_populates= "commands", overlaps='rating_commands')
 
     def __init__(self, review_id: int, command_type: str):
         self.review_id = review_id
