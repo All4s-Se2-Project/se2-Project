@@ -32,11 +32,11 @@ def create_student_from_transcript(transcript_data, student_data):
     fullname = transcript_data.get('fullname')
 
     #retrieve student from database and update the student object correctly
-    print("Student Data in controller ID is:", student_data.ID)
+    print("Student Data in controller ID is:", student_data.id)
 
     #updating student
     #checking if student already exist based on id
-    student = get_student_by_id(student_data.ID)
+    student = get_student_by_id(student_data.id)
     if not student:
       print(
           f"Student with ID {student.ID} already exists in database from controller!"
@@ -45,7 +45,7 @@ def create_student_from_transcript(transcript_data, student_data):
     else:
       #db.session.add(new_student)
       #updating student
-      update_from_transcript(student_data.ID, admittedTerm, UniId, gpa, degree,
+      update_from_transcript(student_data.id, admittedTerm, UniId, gpa, degree,
                              faculty, fullname)
       #db.session.commit()
       #printing data to be stored
@@ -64,7 +64,7 @@ def create_student_from_transcript(transcript_data, student_data):
 
 
 def get_student_by_id(id):
-  student = Student.query.filter_by(ID=id).first()
+  student = Student.query.filter_by(id=id).first()
   if student:
     return student
   else:
@@ -153,7 +153,7 @@ def get_all_students_json():
   students_json = []
   for student in students:
     student_data = {
-        'id': student.ID,
+        'id': student.id,
         'username': student.username,
         'firstname': student.firstname,
         'lastname': student.lastname,
@@ -183,9 +183,9 @@ def get_all_students_json():
 
 
 #UniId=UniId, gpa=gpa, firstname=fullname, admittedTerm=admittedTerm, degree=degree, faculty=faculty, username=UniId, lastname="", email="", password=""
-def update_from_transcript(ID, newAdmittedTerm, newUniId, newGpa, newDegree,
+def update_from_transcript(id, newAdmittedTerm, newUniId, newGpa, newDegree,
                            newFaculty, newFullname):
-  student = get_student_by_id(ID)
+  student = get_student_by_id(id)
   if student:
     student.admittedTerm = newAdmittedTerm
     student.UniId = newUniId

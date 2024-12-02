@@ -23,7 +23,7 @@ class Review(db.Model):
     commands = relationship("ReviewCommand", back_populates="review", overlaps='rating_commands')
     def __init__(self, staff, student, is_positive, rating, points, details):
         self.created_by_staff_id = staff.id
-        self.student_id = student.ID
+        self.student_id = student.id
         self.is_positive = is_positive
         self.points = points
         self.details = details

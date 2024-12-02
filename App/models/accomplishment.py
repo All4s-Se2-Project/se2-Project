@@ -9,7 +9,7 @@ class Accomplishment(db.Model):
   verified = db.Column(db.Boolean, nullable=False)
   topic = db.Column(db.String(400), nullable=False)
   taggedStaffId = db.Column(db.Integer, db.ForeignKey('staff.id'))
-  createdByStudentID = db.Column(db.Integer, db.ForeignKey('student.ID'))
+  createdByStudentID = db.Column(db.Integer, db.ForeignKey('student.id'))
   uniID = db.Column(db.Integer, nullable=False)
   studentName = db.Column(db.String(40), nullable=False)
   details = db.Column(db.String(400), nullable=False)
@@ -19,7 +19,7 @@ class Accomplishment(db.Model):
 
   def __init__(self, student, verified, taggedStaffId, topic, details, points,
                status, studentSeen):
-    self.createdByStudentID = student.ID
+    self.createdByStudentID = student.id
     self.uniID = student.UniId
     self.studentName = student.full_name
     self.verified = verified
