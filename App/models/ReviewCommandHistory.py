@@ -2,14 +2,16 @@ from datetime import datetime
 from App.database import Base
 from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from App.database import db
 
-
-class ReviewCommandHistory(Base):
+class ReviewCommandHistory(db.Model): #changes Base to db.Model
     __tablename__ = 'review_command_history'
 
     id = Column(Integer, primary_key=True)
     review_command_id = Column(Integer, ForeignKey('review_command.id'), nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False) #added
+
 
     review_command = relationship('ReviewCommand', back_populates='history')
 

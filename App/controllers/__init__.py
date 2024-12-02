@@ -4,7 +4,7 @@ from .staff import *
 from .student import *
 from .karma import *
 from .accomplishment import *
-from .review import *
+#from .review import ReviewController
 from .recommendation import *
 from .incidentReport import *
 from .grades import *
@@ -16,4 +16,6 @@ from .nltk import *
 from .schoolRecommendation import *
 from .jobRecommendation import *
 from .badges import *
+from .reviewCommand import *
+from .reviewCommandHistory import *
 

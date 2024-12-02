@@ -6,7 +6,7 @@ class Recommendation(db.Model):
   __tablename__ = 'recommendation'
   ID = db.Column(db.Integer, primary_key=True)
   createdByStudentID = db.Column(db.String, db.ForeignKey('student.UniId'))
-  taggedStaffID = db.Column(db.Integer, db.ForeignKey('staff.ID'))
+  taggedStaffID = db.Column(db.Integer, db.ForeignKey('staff.id'))
   studentName = db.Column(db.String(100), nullable=False)
   approved = db.Column(db.Boolean, nullable=False)
   currentYearOfStudy = db.Column(db.String(100), nullable=False)
@@ -24,7 +24,7 @@ class Recommendation(db.Model):
   def __init__(self, student, staffID, approved, status, currentYearOfStudy,
                details, studentSeen):
     self.createdByStudentID = student.UniId
-    self.studentName = f"{student.firstname} {student.lastname}"
+    self.studentName = student.full_name
     self.taggedStaffID = staffID
     self.approved = approved
     self.dateRequested = datetime.now()

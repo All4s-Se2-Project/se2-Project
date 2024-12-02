@@ -10,8 +10,10 @@ from App.controllers import (
     create_accomplishment,
     get_staff_by_id,
     get_student_by_UniId,
-    create_review,
+
 )
+#create review
+from App.controllers.review import ReviewController
 from flask_login import login_required, login_user, current_user, logout_user
 
 index_views = Blueprint('index_views',
@@ -142,14 +144,14 @@ def init():
 
   staff = get_staff_by_id(7)
   student1 = get_student_by_UniId(816031609)
-  create_review(staff, student1, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student1, True, 5, "Behaves very well in class!")
 
   student2 = get_student_by_UniId(816016480)
-  create_review(staff, student2, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student2, True, 5, "Behaves very well in class!")
   student3 = get_student_by_UniId(816026834)
-  create_review(staff, student3, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student3, True, 5, "Behaves very well in class!")
   student4 = get_student_by_UniId(816030847)
-  create_review(staff, student4, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student4, True, 5, "Behaves very well in class!")
   create_admin(username="admin",
                firstname="Admin",
                lastname="Admin",

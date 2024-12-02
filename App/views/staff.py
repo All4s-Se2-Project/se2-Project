@@ -11,11 +11,13 @@ from App.controllers import (
     get_accomplishment, get_student_by_id, get_recommendations_staff,
     get_recommendation, get_staff_by_id, get_students_by_faculty,
     get_staff_by_id, get_requested_accomplishments, get_transcript,
-    get_total_As, get_student_for_ir, create_review, get_karma,
+    get_total_As, get_student_for_ir, get_karma,
     analyze_sentiment, get_requested_accomplishments_count,
     get_recommendations_staff_count, calculate_ranks, update_total_points,
     calculate_academic_points, calculate_accomplishment_points,
     calculate_review_points, get_all_verified)
+# create_review
+from App.controllers.review import ReviewController
 
 staff_views = Blueprint('staff_views',
                         __name__,
@@ -105,7 +107,7 @@ def createReview():
     positive = False
 
   if student:
-    review = create_review(staff, student, positive, points, details)
+    review = ReviewController.create_review(staff, student, positive, points, details)
     message = f"You have created a review on Student: {studentName}"
     return render_template('Stafflandingpage.html', message=message)
   else:

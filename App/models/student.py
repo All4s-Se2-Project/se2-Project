@@ -1,76 +1,38 @@
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, ForeignKey
-from App.models.user import User
+from App.database import db
+from .user import User
 
 
 class Student(User):
     __tablename__ = 'student'
-    id = Column(Integer, ForeignKey("user.id"), primary_key=True)
-    uni_id = Column(String(10), nullable=False)
-    degree = Column(String(120), nullable=False)
-    full_name = Column(String(255), nullable=True)
-    admitted_term = Column(String(120), nullable=False)
-    gpa = Column(String(120), nullable=True)
-
-    reviews = relationship("Review", backref="studentReviews", lazy="joined")
-    accomplishments = relationship("Accomplishment", backref="studentAccomplishments", lazy="joined")
-    incidents = relationship("IncidentReport", backref="studentIncidents", lazy="joined")
-    grades = relationship("Grades", backref="studentGrades", lazy="joined")
-    transcripts = relationship("Transcript", backref="student", lazy="joined")
-    badges = relationship("Badges", backref="studentBadge", lazy="joined")
-    karma_id = Column(Integer, ForeignKey("karma.karmaID"))
+    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    UniId = db.Column(db.String(10), nullable=False)
+    degree = db.Column(db.String(120), nullable=False)
+    full_name = db.Column(db.String(255), nullable=True)
+    karma = db.Column(db.Integer, nullable=True, default=0)  # Default to 0
 
     __mapper_args__ = {"polymorphic_identity": "student"}
 
-    def __init__(
-        self,
-        username: str,
-        uni_id: str,
-        first_name: str,
-        last_name: str,
-        email: str,
-        password: str,
-        faculty: str,
-        admitted_term: str,
-        degree: str,
-        gpa: str = None,
-    ):
-        super().__init__(
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            password=password,
-            faculty=faculty,
-        )
-        self.uni_id = uni_id
+    def __init__(self, username, UniId, first_name, last_name, email, password, faculty, degree, karma=0):
+        super().__init__(username=username,
+                         firstname=first_name,
+                         lastname=last_name,
+                         email=email,
+                         password=password,
+                         faculty=faculty)
+        self.UniId = UniId
         self.degree = degree
-        self.admitted_term = admitted_term
-        self.gpa = gpa
         self.full_name = f"{first_name} {last_name}"
+        self.karma = karma
 
     def get_id(self):
-        return self.id
+        return self.id  # Use lowercase 'id'
 
-    def to_json(self, karma=None) -> dict:
+    def to_json(self):
         return {
-            "studentID": self.id,
+            "studentID": self.id,  # Use lowercase 'id'
             "username": self.username,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "full_name": self.full_name,
-            "gpa": self.gpa,
-            "email": self.email,
-            "faculty": self.faculty,
+            "fullName": self.full_name,
             "degree": self.degree,
-            "admitted_term": self.admitted_term,
-            "uni_id": self.uni_id,
-            "accomplishments": [
-                accomplishment.to_json() for accomplishment in self.accomplishments
-            ],
-            "incidents": [incident.to_json() for incident in self.incidents],
-            "grades": [grade.to_json() for grade in self.grades],
-            "transcripts": [transcript.to_json() for transcript in self.transcripts],
-            "karma_score": karma.points if karma else None,
-            "karma_rank": karma.rank if karma else None,
+            "uniId": self.UniId,  # Use correct attribute name
+            "karma": self.karma,
         }

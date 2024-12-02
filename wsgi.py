@@ -2,6 +2,8 @@ import click, pytest, sys
 import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
+from App.controllers.rating import calculateKarma
+
 
 from App.controllers.rating import RatingController, calculateKarma
 from App.controllers.review import ReviewController
@@ -14,9 +16,22 @@ from App.controllers import (
     create_student, create_staff, create_admin, get_all_users_json,
     get_all_users, get_transcript, get_student_by_UniId, setup_nltk,
     analyze_sentiment, get_total_As, get_total_courses_attempted,
-    calculate_academic_score, create_review, create_incident_report,
+    calculate_academic_score, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma, push, pop,get_all_history, rating)
+    create_job_recommendation, create_karma, get_karma, get_all_history, rating)
+
+from flask.cli import AppGroup
+from App.controllers.user import (
+    create_user,
+    get_user,
+    get_all_users,
+    update_user_username,
+)
+
+
+'''push, pop,'''
+'''create_review,'''
+from App.controllers.review import ReviewController
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -24,7 +39,7 @@ app = create_app()
 migrate = get_migrate(app)
 
 
-# This command creates and initializes the database
+
 @app.cli.command("init", help="Creates and initializes the database")
 def initialize():
   db.drop_all()
@@ -36,55 +51,45 @@ def initialize():
                  email="billy@example.com",
                  password="billypass",
                  faculty="FST",
-                 admittedTerm="",
                  UniId='816031160',
-                 degree="",
-                 gpa="")
+                 degree="")
 
   create_student(username="shivum",
+                 UniId='816016480',
                  firstname="Shivum",
                  lastname="Praboocharan",
                  email="shivum.praboocharan@my.uwi.edu",
                  password="shivumpass",
                  faculty="FST",
-                 admittedTerm="2019/2021",
-                 UniId='816016480',
-                 degree="Bachelor of Computer Science with Management",
-                 gpa='')
+                 degree="Bachelor of Computer Science with Management")
 
   create_student(username="jovani",
+                 UniId='816026834',
                  firstname="Jovani",
                  lastname="Highley",
                  email="jovani.highley@my.uwi.edu",
                  password="jovanipass",
                  faculty="FST",
-                 admittedTerm="2021/2022",
-                 UniId='816026834',
-                 degree="Bachelor of Computer Science with Management",
-                 gpa='')
+                 degree="Bachelor of Computer Science with Management")
 
   create_student(username="kasim",
+                 UniId='816030847',
                  firstname="Kasim",
                  lastname="Taylor",
                  email="kasim.taylor@my.uwi.edu",
                  password="kasimpass",
                  faculty="FST",
-                 admittedTerm="2019/2021",
-                 UniId='816030847',
-                 degree="Bachelor of Computer Science (General",
-                 gpa='')
+                 degree="Bachelor of Computer Science (General")
 
   create_student(username="brian",
+                 UniId='816031609',
                  firstname="Brian",
                  lastname="Cheruiyot",
                  email="brian.cheruiyot@my.uwi.edu",
                  password="brianpass",
                  faculty="FST",
-                 admittedTerm="2021/2022",
-                 UniId='816031609',
-                 degree="Bachelor of Computer Science (General)",
-                 gpa="")
-
+                 degree="Bachelor of Computer Science (General)")
+  
   #Creating staff
   create_staff(username="tim",
                firstname="Tim",
@@ -119,17 +124,18 @@ def initialize():
                         "I placed first at runtime.", 0, "None Yet")
   create_accomplishment(2, False, "Vijayanandh Rajamanickam", "Runtime",
                         "I placed first at runtime.", 0, "None Yet")
-
+  
   staff = get_staff_by_id(7)
   student1 = get_student_by_UniId(816031609)
-  create_review(staff, student1, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student1, True, 5, 50, "Behaves very well in class!")
 
   student2 = get_student_by_UniId(816016480)
-  create_review(staff, student2, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student2, True, 5,50, "Behaves very well in class!")
   student3 = get_student_by_UniId(816026834)
-  create_review(staff, student3, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student3, True, 5, 50, "Behaves very well in class!")
   student4 = get_student_by_UniId(816030847)
-  create_review(staff, student4, True, 5, "Behaves very well in class!")
+  ReviewController.create_review(staff, student4, True, 5, 50,  "Behaves very well in class!")
+  
   create_admin(username="admin",
                firstname="Admin",
                lastname="Admin",
@@ -319,7 +325,7 @@ def nltk_tests_command(type):
 @test.command("print", help="print get_transcript")
 @click.argument("type", default="all")
 def print_transcript(type):
-  studentID = input("Enter student ID: ")  # Prompt user to enter student ID
+  studentID = input("Enter student ID: ")  
   transcripts = get_transcript(
       studentID)  # Get transcript data for the student
   if transcripts:
@@ -403,6 +409,7 @@ History Commands
 
 history_cli = AppGroup('history', help='Commands for managing review command history')
 
+'''
 @history_cli.command("push", help="Push a reviewCommand ID into the history")
 @click.argument("review_command_id", type=int)
 def push_command(review_command_id):
@@ -411,7 +418,8 @@ def push_command(review_command_id):
         click.echo(f"History pushed: ID={entry.reviewCommand_id}, Timestamp={entry.timestamp}")
     except Exception as e:
         click.echo(f"Failed to push history: {e}")
-
+'''
+'''
 @history_cli.command("pop", help="Pop the most recent reviewCommand ID from the history")
 @click.argument("review_command_id", type=int)
 def pop_command(review_command_id):
@@ -425,7 +433,7 @@ def pop_command(review_command_id):
         click.echo(f"Failed to pop history: {e}")
 
 app.cli.add_command(history_cli)
-
+'''
 '''
 User Commands
 '''
@@ -452,7 +460,7 @@ def get_all_history_command(user_id):
 @click.argument("user_id", type=int)
 @click.argument("date", type=str)
 def get_history_by_date_command(user_id, date):
-    """Get history entries for a specific user filtered by a date (YYYY-MM-DD)."""
+    
     try:
         history = get_history_by_date(user_id, date)
         if 'error' in history:
@@ -471,7 +479,7 @@ def get_history_by_date_command(user_id, date):
 @click.argument("start_date", type=str)
 @click.argument("end_date", type=str)
 def get_history_by_range_command(user_id, start_date, end_date):
-    """Get history entries for a specific user filtered by a date range (YYYY-MM-DD to YYYY-MM-DD)."""
+
     try:
         history = get_history_by_range(user_id, start_date, end_date)
         if 'error' in history:
@@ -505,33 +513,30 @@ app.cli.add_command(user_history_cli)
 @app.cli.command('display_review')
 @click.argument('review_id')
 def display_review_cli(review_id):
-    """
-    CLI command to display review by its ID.
-    Usage: flask display_review <review_id>
-    """
-    controller = ReviewController()  # Initialize the ReviewController
-    result = controller.display_review(review_id)  # Call the method to display the review
+    
+    controller = ReviewController()  
+    result = controller.display_review(review_id) 
 
     if result:
         print(f"Review displayed successfully: {result}")
     else:
         print("Failed to display review.")
 
-@app.cli.command('calculate_karma')
-@click.argument('review_id')
-@click.argument('star_rating', type=int)  # Ensuring that star_rating is an integer
+@app.cli.command('calculate_karma', help='Calculate karma for a student based on a review')
+@click.argument('review_id', type=int)
+@click.argument('star_rating', type=int)
 def calculate_karma_cli(review_id, star_rating):
-    """
-    CLI command to calculate karma for a student based on a review ID and star rating.
-    Usage: flask calculate_karma <review_id> <star_rating>
-    """
+   
     print(f"Calculating karma for Review ID: {review_id} with Star Rating: {star_rating}")
-    new_karma = calculateKarma(review_id, star_rating)  # Calling the calculateKarma function
+    try:
+        new_karma = calculateKarma(review_id, star_rating)  
+        if new_karma is not None:
+            print(f"Karma updated successfully. New Karma: {new_karma}")
+        else:
+            print("Failed to calculate karma.")
+    except Exception as e:
+        print(f"Error during karma calculation: {e}")
 
-    if new_karma is not None:
-        print(f"Karma updated successfully. New Karma: {new_karma}")
-    else:
-        print("Failed to update karma.")
 
 
 '''
