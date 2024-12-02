@@ -10,7 +10,7 @@ from App.models.user import User
 class Staff(User):
     __tablename__ = 'staff'
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    reviews = db.relationship('Review', backref='staffReviews', lazy='joined')
+    staff_reviews = db.relationship('Review', backref='staffReviews', lazy='joined')
     __mapper_args__ = {"polymorphic_identity": "staff"}
 
     def __init__(self, username, first_name, last_name, email, password, faculty):

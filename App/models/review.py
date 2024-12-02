@@ -18,9 +18,9 @@ class Review(db.Model):
     rating = Column(Integer, nullable=False)
 
     student = relationship('Student', backref='reviews', lazy=True)
+    staff = db.relationship('Staff', backref='reviews_reviews')  
     rating_commands = relationship("RatingCommand", back_populates="review")
     commands = relationship("ReviewCommand", back_populates="review", overlaps='rating_commands')
-    
     def __init__(self, staff, student, is_positive, rating, points, details):
         self.created_by_staff_id = staff.id
         self.student_id = student.ID
@@ -36,9 +36,9 @@ class Review(db.Model):
     def to_json(self):
         return {
             "reviewID": self.id,
-            "reviewer": f"{self.staff.firstname} {self.staff.lastname}",
-            "studentID": self.student.ID,
-            "studentName": f"{self.student.firstname} {self.student.lastname}",
+            "reviewer": f"{self.staff.first_name} {self.staff.last_name}",
+            "studentID": self.student.id,
+            "studentName": f"{self.student.first_name} {self.student.last_name}",
             "created": self.date_created.strftime("%d-%m-%Y %H:%M"),
             "points": self.points,
             "details": self.details,
