@@ -1,9 +1,7 @@
-from App.database import Base
+from App.database import db
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime
 from datetime import datetime
-from App.database import db
-
 
 class Review(db.Model):
     __tablename__ = 'review'
@@ -18,9 +16,10 @@ class Review(db.Model):
     rating = Column(Integer, nullable=False)
 
     student = relationship('Student', backref='reviews', lazy=True)
-    staff = db.relationship('Staff', backref='reviews_reviews')  
+    staff = db.relationship('Staff', backref='reviews_handled', overlaps="reviewing_staff,reviews") 
     rating_commands = relationship("RatingCommand", back_populates="review")
     commands = relationship("ReviewCommand", back_populates="review", overlaps='rating_commands')
+
     def __init__(self, staff, student, is_positive, rating, points, details):
         self.created_by_staff_id = staff.id
         self.student_id = student.id
@@ -29,9 +28,6 @@ class Review(db.Model):
         self.details = details
         self.date_created = datetime.utcnow()
         self.rating = rating
-
-    def get_id(self):
-        return self.id
 
     def to_json(self):
         return {

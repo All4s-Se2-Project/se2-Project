@@ -1,3 +1,4 @@
+from App.controllers.student import get_student_by_id
 from App.models import Staff, Review, Student
 from App.database import db
 
@@ -35,23 +36,28 @@ def student_search(username=None, studentID=None, faculty=None, degree=None):
         query = query.filter_by(degree=degree)
     return query.first()
 
-def create_review(staffID, reviewType, studentName, teacher, studentID, topic, details, points):
+def create_review(staffID, is_positive, studentID, rating, points, details): 
     staff = get_staff_by_id(staffID)
     if not staff:
         raise ValueError("Staff member not found.")
+
+    student = get_student_by_id(studentID)  
+    if not student:
+        raise ValueError("Student not found.")
+
+  
     review = Review(
-        reviewType=reviewType,
-        studentName=studentName,
-        teacher=teacher,
-        studentID=studentID,
-        topic=topic,
-        details=details,
+        staff=staff,
+        student=student,
+        is_positive=is_positive,
+        rating=rating,
         points=points,
-        staffID=staffID,
+        details=details,
     )
     db.session.add(review)
     db.session.commit()
     return review
+
 
 def add_rating(reviewID, rating):
     review = Review.query.get(reviewID)

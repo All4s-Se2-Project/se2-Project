@@ -1,17 +1,11 @@
-#removed reports and pending accomplishments 
-#added new methods
-
-from sqlalchemy.orm import relationship
-from App.database import db
-#from sqlalchemy import Column, Integer, ForeignKey
 from App.models.user import User
-
+from App.database import db
 
 class Staff(User):
     __tablename__ = 'staff'
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    staff_reviews = db.relationship('Review', backref='staffReviews', lazy='joined')
-    __mapper_args__ = {"polymorphic_identity": "staff"}
+    reviews = db.relationship('Review', backref='reviewing_staff', overlaps="reviews_handled") 
+    __mapper_args__ = {"polymorphic_identity": "staff"} 
 
     def __init__(self, username, first_name, last_name, email, password, faculty):
         super().__init__(
@@ -22,7 +16,7 @@ class Staff(User):
             password=password,
             faculty=faculty
         )
-        
+
     def to_json(self) -> dict:
         return {
             "staffID": self.id,
@@ -36,4 +30,3 @@ class Staff(User):
 
     def __repr__(self):
         return f'<Staff {self.id}: {self.email}>'
- 
