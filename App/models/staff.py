@@ -4,7 +4,14 @@ from App.database import db
 class Staff(User):
     __tablename__ = 'staff'
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    reviews = db.relationship('Review', backref='reviewing_staff', overlaps="reviews_handled") 
+
+    
+    reviews = db.relationship(
+        'Review',
+        back_populates='reviewing_staff',  
+        overlaps="reviews_handled"
+    )
+
     __mapper_args__ = {"polymorphic_identity": "staff"} 
 
     def __init__(self, username, first_name, last_name, email, password, faculty):
