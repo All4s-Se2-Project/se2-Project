@@ -3,6 +3,8 @@ import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
 from App.controllers.rating import calculateKarma
+from App.controllers.staff import student_search, delete_review, add_rating, create_review
+
 
 
 from App.controllers.rating import RatingController, calculateKarma
@@ -615,6 +617,68 @@ def log_change_review_command():
 
 
 app.cli.add_command(review_command_cli)
+
+'''
+Staff CLI Commands
+'''
+
+staff_cli = AppGroup('staff', help='Commands for staff operations')
+
+@staff_cli.command("student_search", help="Search for a student")
+@click.argument("student_id")
+def cli_student_search(student_id):
+    try:
+        student = student_search(student_id)
+        if student:
+            print(f"Student found: {student.to_json()}")
+        else:
+            print(f"No student found with ID: {student_id}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+@staff_cli.command("delete_review", help="Delete a review by ID")
+@click.argument("review_id", type=int)
+def cli_delete_review(review_id):
+    try:
+        success = delete_review(review_id)
+        if success:
+            print(f"Review with ID {review_id} deleted successfully.")
+        else:
+            print(f"Failed to delete review with ID {review_id}.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+@staff_cli.command("add_rating", help="Add a rating to a review")
+@click.argument("review_id", type=int)
+@click.argument("rating_value", type=int)
+def cli_add_rating(review_id, rating_value):
+    try:
+        success = add_rating(review_id, rating_value)
+        if success:
+            print(f"Rating added to review {review_id} successfully.")
+        else:
+            print(f"Failed to add rating to review {review_id}.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+@staff_cli.command("create_review", help="Create a review for a student")
+@click.argument("student_id")
+@click.argument("staff_id")
+@click.argument("is_positive", type=bool)
+@click.argument("rating", type=int)
+@click.argument("points", type=int)
+@click.argument("details")
+def cli_create_review(student_id, staff_id, is_positive, rating, points, details):
+    try:
+        review = create_review(student_id, staff_id, is_positive, rating, points, details)
+        if review:
+            print(f"Review created successfully: {review.to_json()}")
+        else:
+            print("Failed to create review.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+app.cli.add_command(staff_cli)
 
 
 
