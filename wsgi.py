@@ -680,6 +680,27 @@ def cli_create_review(staff_id, is_positive, student_id, rating, points, details
 
 app.cli.add_command(staff_cli)
 
+student_cli = AppGroup('student', help='Commands for managing students')
+
+@student_cli.command("display_karma", help="Display karma score for a specific student")
+@click.argument("student_id", type=int)
+def display_karma(student_id):
+    student = get_student_by_id(student_id)
+    if not student:
+        print(f"Student with ID {student_id} not found.")
+        return
+
+    try:
+        print(student.displayKarma())
+    except AttributeError as e:
+        print(f"Error: {str(e)} - Ensure the student model includes a 'karma' field and the 'displayKarma' method.")
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+
+
+app.cli.add_command(student_cli)
+
+
 
 
 if __name__ == "__main__":

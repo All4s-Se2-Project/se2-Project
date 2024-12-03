@@ -36,3 +36,7 @@ class Student(User):
             "uniId": self.UniId,  # Use correct attribute name
             "karma": self.karma,
         }
+
+    def displayKarma(self):
+        return f"Karma Score: {self.karma}"
+
