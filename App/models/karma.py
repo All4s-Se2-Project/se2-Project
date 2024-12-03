@@ -11,7 +11,7 @@ class Karma(db.Model):
   incidentPoints = db.Column(db.Float, nullable=False, default=0.0)
   reviewsPoints = db.Column(db.Float, nullable=False, default=0.0)
   rank = db.Column(db.Integer, nullable=False, default=-99)
-  studentID = db.Column(db.Integer, db.ForeignKey('student.ID',
+  studentID = db.Column(db.Integer, db.ForeignKey('student.id',
                                                   use_alter=True))
 
   def __init__(self, points, academicPoints, accomplishmentPoints,

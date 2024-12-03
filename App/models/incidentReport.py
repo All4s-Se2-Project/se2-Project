@@ -6,7 +6,7 @@ from datetime import datetime
 class IncidentReport(db.Model):
   __tablename__ = "incidentreport"
   id = db.Column(db.Integer, primary_key=True)
-  studentID = db.Column(db.Integer, db.ForeignKey('student.ID'))
+  studentID = db.Column(db.Integer, db.ForeignKey('student.id'))
   madeByStaffId = db.Column(db.Integer, db.ForeignKey('staff.id'))
   topic = db.Column(db.String(40), nullable=False)
   report = db.Column(db.String(400), nullable=False)
