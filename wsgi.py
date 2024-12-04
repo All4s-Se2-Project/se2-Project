@@ -525,7 +525,7 @@ def display_review_cli(review_id):
         print("Failed to display review.")
 
 #testing this command        
-@app.cli.command('review_log', help="Get the review log of a user")
+@app.cli.command('get_all_reviews', help="Get the review log of a user")
 @click.argument('student_id', type=int, default=1)
 def review_log_cli(student_id):
     stud = Student.query.get(student_id)
@@ -536,7 +536,7 @@ def review_log_cli(student_id):
     else:
         print("Student not found.")
 
-@app.cli.command("t-review", help="Get review for a user at a specific time")
+@app.cli.command("time-review", help="Get review for a user at a specific time")
 @click.argument("student_id", type=int, default=1)
 @click.argument("time", type=str, default="1 min ago")  # Assume time is given in ISO format e.g., "2023-01-15T12:00:00"
 def get_review_at_time(student_id, time):
