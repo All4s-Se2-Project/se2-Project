@@ -524,7 +524,16 @@ def display_review_cli(review_id):
     else:
         print("Failed to display review.")
 
-
+@app.cli.command('get_all_reviews_for_student', help="Get the review log of a user")
+@click.argument('student_id', type=int, default=1)
+def get_all_reviews_for_student_cli(student_id):
+    stud = Student.query.get(student_id)
+    if stud:
+        print(f'Review log for Student ID {student_id}:')
+        for review in stud.reviews:
+          print(f'Review {review.id} was created by {review.reviewing_staff.first_name} {review.reviewing_staff.last_name} on {review.date_created}')    
+    else:
+        print("Student not found.")
 
 '''
 CalculateKarmaCommand CLI
