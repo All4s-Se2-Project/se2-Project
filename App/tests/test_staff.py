@@ -23,11 +23,21 @@ from App.controllers import (
 class StaffUnitTests(unittest.TestCase):
 
     def test_new_staff(self):
-        staff = Staff(username="joe",first_name="Joe", last_name="Mama", email="joe@example.com", password="joepass", faculty="FST")
+        staff = Staff(username="joe",
+                      first_name="Joe", 
+                      last_name="Mama", 
+                      email="joe@example.com", 
+                      password="joepass", 
+                      faculty="FST")
         assert staff.username == "joe"
 
     def test_get_json(self):
-        staff = Staff(username="joe",first_name="Joe", last_name="Mama", email="joe@example.com", password="joepass", faculty="FST")
+        staff = Staff(username="joe",
+                      first_name="Joe",
+                      last_name="Mama", 
+                      email="joe@example.com", 
+                      password="joepass", 
+                      faculty="FST")
         staff_json = staff.to_json()
         print(staff_json)
         self.assertDictEqual(staff_json, {"staffID": None,
@@ -133,4 +143,4 @@ class StaffIntegrationTests(unittest.TestCase):
                              "Great job!") is not None
         review = get_review(2)
         assert delete_review(review.id) == True
-        assert get_review(2) is None
+        assert get_review(2) is None 

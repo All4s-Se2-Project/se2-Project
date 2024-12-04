@@ -12,7 +12,7 @@ class Student(User):
 
     __mapper_args__ = {"polymorphic_identity": "student"}
 
-    def __init__(self, username, UniId, first_name, last_name, email, password, faculty, degree, karma=0):
+    def __init__(self, username, UniId, first_name, last_name, email, password, faculty, degree, karma=50):
         super().__init__(username=username,
                          firstname=first_name,
                          lastname=last_name,
@@ -36,7 +36,4 @@ class Student(User):
             "uniId": self.UniId,  # Use correct attribute name
             "karma": self.karma,
         }
-
-    def displayKarma(self):
-        return f"Karma Score: {self.karma}"
 

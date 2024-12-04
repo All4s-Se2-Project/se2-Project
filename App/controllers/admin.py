@@ -3,12 +3,10 @@ from App.database import db
 from App.controllers import (
     create_staff,
     create_student,
-    update_admittedTerm,
     update_degree,
     update_email,
     update_name,
     update_username,
-    update_yearofStudy,
     update_faculty,
     update_password
 )
