@@ -26,7 +26,7 @@ class ReviewCommandController:
         return None
 
    def logChange(self):
-    try:
+    '''try:
         review_command = ReviewCommand.query.order_by(ReviewCommand.executed_at.desc()).first()
 
         if not review_command:
@@ -45,5 +45,19 @@ class ReviewCommandController:
         return review_command
     except Exception as e:
         print(f"[ReviewCommandController.logChange] Unexpected error: {str(e)}")
-        return None
+        return None'''
+    review_commands = ReviewCommand.query.order_by(ReviewCommand.executed_at.desc()).all()
 
+    log = []
+    for command in review_commands:
+        review = command.review  # Assuming the relationship to Review is set correctly
+        log_entry = {
+            "Command ID": command.id,
+            "Command Type": command.command_type,
+            "Review ID": command.review_id,
+            "Executed At": command.executed_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "Review Details": review.details if review else "N/A",
+        }
+        log.append(log_entry)
+
+    return log

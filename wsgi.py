@@ -524,6 +524,19 @@ def display_review_cli(review_id):
     else:
         print("Failed to display review.")
 
+#testing this command        
+@app.cli.command('review_log', help="Get the review log of a user")
+@click.argument('student_id', type=int, default=1)
+def review_log_cli(student_id):
+    stud = Student.query.get(student_id)
+    if stud:
+        print(f'Review log for Student ID {student_id}:')
+        for review in stud.reviews:
+          print(f'Review {review.id} was created by {review.created_by_staff_id} on {review.date_created}')    
+    else:
+        print("Student not found.")
+
+
 @app.cli.command('calculate_karma', help='Calculate karma for a student based on a review')
 @click.argument('review_id', type=int)
 @click.argument('star_rating', type=int)
@@ -613,8 +626,6 @@ def log_change_review_command():
         print(f"Changes logged successfully for ReviewCommand ID: {result.id}")
     else:
         print("Failed to log changes or no command found.")
-
-
 
 app.cli.add_command(review_command_cli)
 
