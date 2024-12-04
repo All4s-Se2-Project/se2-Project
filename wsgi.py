@@ -532,10 +532,30 @@ def review_log_cli(student_id):
     if stud:
         print(f'Review log for Student ID {student_id}:')
         for review in stud.reviews:
-          print(f'Review {review.id} was created by {review.created_by_staff_id} on {review.date_created}')    
+          print(f'Review {review.id} was created by {review.reviewing_staff.first_name} {review.reviewing_staff.last_name} on {review.date_created}')    
     else:
         print("Student not found.")
 
+@app.cli.command("t-review", help="Get review for a user at a specific time")
+@click.argument("student_id", type=int, default=1)
+@click.argument("time", type=str, default="1 min ago")  # Assume time is given in ISO format e.g., "2023-01-15T12:00:00"
+def get_review_at_time(student_id, time):
+    from datetime import datetime
+    from datetime import timedelta
+    stud = Student.query.get(student_id)
+    if stud:
+        if time=="1 min ago":
+            review_at_time = stud.get_review_at_time(datetime.utcnow() - timedelta(minutes=1))
+        else:
+            review_at_time = stud.get_review_at_time(datetime.fromisoformat(time))
+        
+        if review_at_time:
+            print(f"Review for Student {student_id} at {time}:")
+            print(review_at_time)
+        else:
+            print(f"No review found for Student {student_id} at {time}.")
+    else:
+        print('Student not found.')
 
 @app.cli.command('calculate_karma', help='Calculate karma for a student based on a review')
 @click.argument('review_id', type=int)
