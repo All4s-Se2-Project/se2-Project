@@ -8,7 +8,7 @@ class Student(User):
     UniId = db.Column(db.String(10), nullable=False)
     degree = db.Column(db.String(120), nullable=False)
     full_name = db.Column(db.String(255), nullable=True)
-    karma = db.Column(db.Integer, nullable=True, default=50)  # Default to 50
+    karma = db.Column(db.Integer, nullable=True, default=50)  
 
     __mapper_args__ = {"polymorphic_identity": "student"}
 
@@ -25,15 +25,18 @@ class Student(User):
         self.karma = karma
 
     def get_id(self):
-        return self.id  # Use lowercase 'id'
+        return self.id 
 
     def to_json(self):
         return {
-            "studentID": self.id,  # Use lowercase 'id'
+            "studentID": self.id, 
             "username": self.username,
             "fullName": self.full_name,
             "degree": self.degree,
-            "uniId": self.UniId,  # Use correct attribute name
+            "uniId": self.UniId, 
             "karma": self.karma,
         }
 
+ 
+    def displayKarma(self):
+        return f"Karma Points for Student {self.full_name} (ID: {self.id}): {self.karma}"

@@ -530,7 +530,7 @@ def display_review_cli(review_id):
 CalculateKarmaCommand CLI
 '''
 
-calculate_Karma_Command = AppGroup('CalculateKarmaCommand')
+calculate_Karma_Command = AppGroup('calculateKarmaCommand')
 
 
 @calculate_Karma_Command.command("execute", help="Execute a pending rating command")
@@ -573,7 +573,7 @@ def calculate_karma_cli(review_id, star_rating):
         print("Failed to update karma.")
 
 
-print("Registering CLI group: calculateKarmaCommand")
+
 
 
 app.cli.add_command(calculate_Karma_Command)
@@ -689,7 +689,7 @@ def display_karma(student_id):
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
 
-
+print("Registering CLI group: student")
 app.cli.add_command(student_cli)
 
 

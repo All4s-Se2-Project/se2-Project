@@ -71,12 +71,11 @@ def get_student_by_name(firstname, lastname):
 
 
 def get_full_name_by_student_id(student_id):
-  student = Student.query.filter_by(UniId=student_id).first()
-  if student:
-    full_name = f"{student.firstname} {student.lastname}"
-    return full_name
-  else:
+    student = get_student_by_id(student_id)
+    if student:
+        return student.full_name  # Use the 'full_name' attribute directly
     return None
+
 
 
 def get_students_by_degree(degree):
@@ -138,4 +137,5 @@ def displayKarma(studentID):
     student = get_student_by_id(studentID)
     if not student:
         raise ValueError("Student not found.")
-    return f"Karma Score: {student.karma}"
+    return student.displayKarma()
+
