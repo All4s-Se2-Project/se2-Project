@@ -31,9 +31,19 @@ class UserUnitTests(unittest.TestCase):
 
     # pure function no side effects or integrations called
     def test_get_json(self):
-        user = User(username="bob", firstname="Bob", lastname="Smith", password="bobpass", email="bob@example.com", faculty="FST")
-        user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "username":"bob", "firstname":"Bob", "lastname":"Smith", "email":"bob@example.com", "faculty":"FST"})
+        user = User(username="bob", 
+        firstname="Bob", 
+        lastname="Smith", 
+        password="bobpass", 
+        email="bob@example.com", 
+        faculty="FST")
+        user_json = user.to_json()
+        self.assertDictEqual(user_json, {"id":None, 
+                                         "username":"bob", 
+                                         "first_name":"Bob", 
+                                         "last_name":"Smith", 
+                                         "email":"bob@example.com", 
+                                         "faculty":"FST"})
 
     def test_hashed_password(self):
         password = "mypass"
@@ -70,15 +80,15 @@ class UsersIntegrationTests(unittest.TestCase):
         users_json = get_all_users_json()
         self.assertListEqual([{"id":1, 
             "username":"bob", 
-            "firstname":"Bob", 
-            "lastname":"Smith", 
+            "first_name":"Bob", 
+            "last_name":"Smith", 
             "email":"bob@example.com", 
             "faculty":"FST"},
             {
             "id":2, 
             "username":"rick", 
-            "firstname":"Rick", 
-            "lastname":"Grimes", 
+            "first_name":"Rick", 
+            "last_name":"Grimes", 
             "email":"rick@example.com", 
             "faculty":"FST"
             }], users_json)
@@ -97,8 +107,8 @@ class UsersIntegrationTests(unittest.TestCase):
     def test_update_name(self):
         update_name(1, "Bobby", "Jones")
         user = get_user(1)
-        assert user.firstname == "Bobby"
-        assert user.lastname == "Jones"
+        assert user.first_name == "Bobby"
+        assert user.last_name == "Jones"
 
     def test_update_email(self):
         update_email(1, "newemail@example.com")

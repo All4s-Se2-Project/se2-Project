@@ -45,7 +45,7 @@ def get_all_users_json():
     users = User.query.all()
     if not users:
         return []
-    users = [user.get_json() for user in users]
+    users = [user.to_json() for user in users] 
     return users
 
 def update_user_username(id, username):
@@ -77,11 +77,13 @@ def update_username(userID, newUsername):
         print("[user.update_username] Error occurred while updating user username: User "+userID+" not found")
         return False
 
+# App/controllers/user.py
+
 def update_name(userID, newFirstname, newLastName):
     user = get_user(userID)
     if user:
-        user.firstname = newFirstname
-        user.lastname = newLastName
+        user.first_name = newFirstname  # Corrected attribute name
+        user.last_name = newLastName  # Corrected attribute name
         try:
             db.session.commit()
             return True
@@ -90,7 +92,7 @@ def update_name(userID, newFirstname, newLastName):
             db.session.rollback()
             return False
     else:
-        print("[user.update_name] Error occurred while updating user name: User "+userID+" not found")
+        print("[user.update_name] Error occurred while updating user name: User "+str(userID)+" not found")
         return False
 
 def update_email(userID, newEmail):

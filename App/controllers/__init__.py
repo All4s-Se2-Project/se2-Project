@@ -4,7 +4,7 @@ from .staff import *
 from .student import *
 from .karma import *
 from .accomplishment import *
-#from .review import ReviewController
+from .review import ReviewController
 from .recommendation import *
 from .incidentReport import *
 from .grades import *
