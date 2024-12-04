@@ -1,3 +1,6 @@
+from flask import jsonify, request
+from flask_jwt_extended import current_user
+from flask_login import login_user, logout_user
 from App.models import User, Student, ReviewCommandHistory
 from App.database import db
 from datetime import datetime
@@ -231,3 +234,25 @@ def get_latest_version(user_id: int):
         }
     except Exception as e:
         return {'error': str(e)}
+    
+def login_user_controller():
+   
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+  
+    user = User.query.filter_by(username=username).first()
+    if not user or not user.check_password(password):
+        return jsonify({"error": "Invalid username or password"}), 401
+
+  
+    login_user(user)
+    return jsonify({"message": f"User {user.username} logged in successfully.", "user": user.to_json()}), 200
+
+def logout_user_controller():
+    if current_user.is_authenticated:
+        username = current_user.username
+        logout_user()
+        return jsonify({"message": f"User {username} logged out successfully."}), 200
+    return jsonify({"error": "No user is currently logged in."}), 401
