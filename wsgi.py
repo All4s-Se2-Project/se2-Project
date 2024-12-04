@@ -536,7 +536,7 @@ def get_all_student_reviews_cli(student_id):
     else:
         print("Student not found.")
 
-@app.cli.command("t-review", help="Get review for a user at a specific time")
+@app.cli.command("review_at_time", help="Get review for a user at a specific time")
 @click.argument("student_id", type=int, default=1)
 @click.argument("time", type=str, default="1 min ago")  # Assume time is given in ISO format e.g., "2023-01-15T12:00:00"
 def get_review_at_time(student_id, time):
