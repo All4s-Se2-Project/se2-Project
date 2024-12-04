@@ -1,4 +1,4 @@
-from App.controllers.student import get_student_by_id
+from App.controllers.student import get_student_by_UniId, get_student_by_id
 from App.models import Staff, Review, Student
 from App.database import db
 
@@ -24,24 +24,24 @@ def get_staff_by_username(username):
     return Staff.query.filter_by(username=username).first()
 
 
-def student_search(username=None, studentID=None, faculty=None, degree=None):
+def student_search(username=None, UniId=None, faculty=None, degree=None):
     query = Student.query
     if username:
         query = query.filter_by(username=username)
-    if studentID:
-        query = query.filter_by(ID=studentID)
+    if UniId:
+        query = query.filter_by(UniId=UniId)
     if faculty:
         query = query.filter_by(faculty=faculty)
     if degree:
         query = query.filter_by(degree=degree)
     return query.first()
 
-def create_review(staffID, is_positive, studentID, rating, points, details): 
+def create_review(staffID, is_positive, UniId, rating, points, details): 
     staff = get_staff_by_id(staffID)
     if not staff:
         raise ValueError("Staff member not found.")
 
-    student = get_student_by_id(studentID)  
+    student = get_student_by_UniId(UniId)  
     if not student:
         raise ValueError("Student not found.")
 
@@ -58,9 +58,18 @@ def create_review(staffID, is_positive, studentID, rating, points, details):
     db.session.commit()
     return review
 
+def get_review(reviewID):
+    review = Review.query.get(reviewID)
+    if review:
+        return review
+    else:
+        return None
+
+def get_reviewID(id):
+    return Review.query.filter_by(id=id).first()
 
 def add_rating(reviewID, rating):
-    review = Review.query.get(reviewID)
+    review = get_review(reviewID)
     if review:
         review.rating = rating
         db.session.commit()
@@ -68,9 +77,10 @@ def add_rating(reviewID, rating):
     raise ValueError("Review not found.")
 
 def delete_review(reviewID):
-    review = Review.query.get(reviewID)
+    review = get_review(reviewID)
     if review:
         db.session.delete(review)
         db.session.commit()
         return True
     raise ValueError("Review not found.")
+

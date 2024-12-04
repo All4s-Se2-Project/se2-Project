@@ -13,9 +13,6 @@ from App.controllers import (
     get_student_by_username,
     create_review,
     delete_review,
-    calculate_points_upvote,
-    calculate_points_downvote,
-    get_total_review_points,
     get_review
 )
 '''

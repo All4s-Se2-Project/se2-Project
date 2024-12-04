@@ -5,14 +5,19 @@ from App.main import create_app
 from App.database import db, create_db
 from App.models import Staff
 from App.controllers import (
-    create_staff,
+    create_staff, 
     get_staff_by_id,
+    get_staff_by_name,
     get_staff_by_username,
-    staff_create_review,
-    staff_edit_review,
     create_student,
     get_student_by_username,
-    get_review
+    get_student_by_UniId,
+    delete_review, 
+    student_search, 
+    add_rating, 
+    create_review,
+    get_review,
+    get_reviewID
 )
 '''
    Unit Tests
@@ -20,22 +25,20 @@ from App.controllers import (
 class StaffUnitTests(unittest.TestCase):
 
     def test_new_staff(self):
-        staff = Staff(username="joe",firstname="Joe", lastname="Mama", email="joe@example.com", password="joepass", faculty="FST")
+        staff = Staff(username="joe",first_name="Joe", last_name="Mama", email="joe@example.com", password="joepass", faculty="FST")
         assert staff.username == "joe"
 
     def test_get_json(self):
-        staff = Staff(username="joe",firstname="Joe", lastname="Mama", email="joe@example.com", password="joepass", faculty="FST")
+        staff = Staff(username="joe",first_name="Joe", last_name="Mama", email="joe@example.com", password="joepass", faculty="FST")
         staff_json = staff.to_json()
         print(staff_json)
         self.assertDictEqual(staff_json, {"staffID": None,
             "username": "joe",
-            "firstname": "Joe",
-            "lastname": "Mama",
+            "first_name": "Joe",
+            "last_name": "Mama",
             "email": "joe@example.com",
             "faculty": "FST",
-            "reviews": [],
-            "reports": [],
-            "pendingAccomplishments": []})
+            "reviews": []})
 
 
 '''
@@ -54,33 +57,29 @@ def empty_db():
 class StaffIntegrationTests(unittest.TestCase):
 
     def test_create_staff(self):
-        assert create_staff(username="joe",firstname="Joe", lastname="Mama", email="joe@example.com", password="joepass", faculty="FST") == True
-
+        assert create_staff(username="testuser", firstname="Test", lastname="User", email="test1@example.com", password="testpass", faculty="FST") == True
+    
     def test_get_staff_by_id(self):
         staff = get_staff_by_id(1)
         assert staff is not None
 
+    def test_get_staff_by_name(self):
+        staff = get_staff_by_name("Test", "User")
+        assert staff is not None
+    
     def test_get_staff_by_username(self):
-        staff = get_staff_by_username("joe")
+        staff = get_staff_by_username("testuser")
         assert staff is not None
 
-    def test_staff_create_review(self):
-        assert create_student(username="billy",
-                 firstname="Billy",
-                 lastname="John",
-                 email="billy@example.com",
-                 password="billypass",
-                 faculty="FST",
-                 admittedTerm="",
-                 UniId='816031160',
-                 degree="",
-                 gpa="") == True
-        student = get_student_by_username("billy")
+    def test_student_search(self):
+        assert create_student(username="student1", UniId="816000000", firstname="Student", lastname="One", email="student1@example.com", password="studentpass", faculty="FST", degree="CS") == True
+        student = get_student_by_username("student1")
+        assert student is not None
         staff = get_staff_by_id(1)
         assert staff is not None
-        assert staff_create_review(staff, student, True, 3, "Billy is good.") == True
-
-    def test_staff_edit_review(self):
-        review = get_review(1)
-        assert review is not None
-        assert staff_edit_review(review.ID, "Billy is very good") == True
+        found_student = student_search("student1", "816000000", "FST", "CS")
+        assert found_student is not None
+        assert found_student.username == "student1"
+        assert found_student.UniId == "816000000"
+        assert found_student.faculty == "FST"
+        assert found_student.degree == "CS"
