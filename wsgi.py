@@ -2,12 +2,12 @@ import click, pytest, sys
 import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
-from App.controllers.rating import calculateKarma
+from App.controllers.calculateKarmaCommand import calculateKarma, calculatePoints
 from App.controllers.staff import student_search, delete_review, add_rating, create_review
 
 
 
-from App.controllers.rating import RatingController, calculateKarma
+from App.controllers.calculateKarmaCommand import RatingController, calculateKarma
 from App.controllers.review import ReviewController
 from App.controllers.reviewCommand import ReviewCommandController
 from App.controllers.user import get_history_by_date, get_history_by_range, get_latest_version
@@ -15,12 +15,12 @@ from App.database import db, get_migrate
 from App.main import create_app
 from App.models import Student, Karma
 from App.controllers import (
-    create_student, create_staff, create_admin, get_all_users_json,
+    calculateKarmaCommand, create_student, create_staff, create_admin, get_all_users_json,
     get_all_users, get_transcript, get_student_by_UniId, setup_nltk,
     analyze_sentiment, get_total_As, get_total_courses_attempted,
     calculate_academic_score, create_incident_report,
     create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma, get_all_history, rating)
+    create_job_recommendation, create_karma, get_karma, get_all_history)
 
 from flask.cli import AppGroup
 from App.controllers.user import (
@@ -524,31 +524,16 @@ def display_review_cli(review_id):
     else:
         print("Failed to display review.")
 
-@app.cli.command('calculate_karma', help='Calculate karma for a student based on a review')
-@click.argument('review_id', type=int)
-@click.argument('star_rating', type=int)
-def calculate_karma_cli(review_id, star_rating):
-   
-    print(f"Calculating karma for Review ID: {review_id} with Star Rating: {star_rating}")
-    try:
-        new_karma = calculateKarma(review_id, star_rating)  
-        if new_karma is not None:
-            print(f"Karma updated successfully. New Karma: {new_karma}")
-        else:
-            print("Failed to calculate karma.")
-    except Exception as e:
-        print(f"Error during karma calculation: {e}")
-
 
 
 '''
-Rating Commands
+CalculateKarmaCommand CLI
 '''
 
-rating_cli = AppGroup('rating', help='Commands for managing ratings')
+calculate_Karma_Command = AppGroup('CalculateKarmaCommand')
 
 
-@rating_cli.command("execute", help="Execute a pending rating command")
+@calculate_Karma_Command.command("execute", help="Execute a pending rating command")
 def execute_rating_command():
   
     controller = RatingController()  
@@ -559,17 +544,22 @@ def execute_rating_command():
         print("Failed to execute rating command or no pending command found.")
 
 
-@rating_cli.command("log_change", help="Log changes for a rating command")
-def log_change_rating_command():
-    controller = RatingController()  
-    result = controller.logChange()  
-    if result:
-        print(f"Changes logged successfully for RatingCommand ID: {result.id}")
-    else:
-        print("Failed to log changes or no executed command found.")
+@calculate_Karma_Command.command("calculate_points", help="Calculate points for a given star rating")
+@click.argument("star_rating", type=int)
+def cli_calculate_points(star_rating):
+    try:
+        points = calculatePoints(star_rating)
+        if points is not None:
+            print(f"Star Rating: {star_rating} | Points: {points}")
+        else:
+            print(f"Invalid star rating: {star_rating}.")
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
 
 
-@rating_cli.command("calculate_karma", help="Calculate karma for a student based on review and star rating")
+
+
+@calculate_Karma_Command.command("calculate_karma", help="Calculate karma for a student based on review and star rating")
 @click.argument("review_id", type=int)
 @click.argument("star_rating", type=int)
 def calculate_karma_cli(review_id, star_rating):
@@ -583,8 +573,10 @@ def calculate_karma_cli(review_id, star_rating):
         print("Failed to update karma.")
 
 
+print("Registering CLI group: calculateKarmaCommand")
 
-app.cli.add_command(rating_cli)
+
+app.cli.add_command(calculate_Karma_Command)
 
 '''
 Review Command CLI Commands
