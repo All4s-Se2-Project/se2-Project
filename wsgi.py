@@ -3,7 +3,7 @@ import nltk
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
 from App.controllers.calculateKarmaCommand import calculateKarma, calculatePoints
-from App.controllers.staff import student_search, delete_review, add_rating, create_review 
+from App.controllers.staff import student_search, delete_review, create_review 
 
 
 

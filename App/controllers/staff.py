@@ -36,7 +36,7 @@ def student_search(username=None, UniId=None, faculty=None, degree=None):
         query = query.filter_by(degree=degree)
     return query.first()
 
-def create_review(staffID, is_positive, UniId, rating, points, details): 
+def create_review(staffID, is_positive, UniId, rating, details): 
     staff = get_staff_by_id(staffID)
     if not staff:
         raise ValueError("Staff member not found.")
@@ -44,8 +44,21 @@ def create_review(staffID, is_positive, UniId, rating, points, details):
     student = get_student_by_UniId(UniId)  
     if not student:
         raise ValueError("Student not found.")
+    
+    # Calculate points based on rating
+    if rating == 1:
+        points = -5
+    elif rating == 2:
+        points = -3
+    elif rating == 3:
+        points = 1
+    elif rating == 4:
+        points = 3
+    elif rating == 5:
+        points = 5
+    else:
+        raise ValueError("Invalid rating. Rating must be between 1 and 5.")
 
-  
     review = Review(
         staff=staff,
         student=student,
@@ -64,17 +77,6 @@ def get_review(reviewID):
         return review
     else:
         return None
-
-def get_reviewID(id):
-    return Review.query.filter_by(id=id).first()
-
-def add_rating(reviewID, rating):
-    review = get_review(reviewID)
-    if review:
-        review.rating = rating
-        db.session.commit()
-        return review.rating
-    raise ValueError("Review not found.")
 
 def delete_review(reviewID):
     review = get_review(reviewID)

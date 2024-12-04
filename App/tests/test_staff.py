@@ -14,10 +14,8 @@ from App.controllers import (
     get_student_by_UniId,
     delete_review, 
     student_search, 
-    add_rating, 
     create_review,
     get_review,
-    get_reviewID
 )
 '''
    Unit Tests
@@ -57,7 +55,12 @@ def empty_db():
 class StaffIntegrationTests(unittest.TestCase):
 
     def test_create_staff(self):
-        assert create_staff(username="testuser", firstname="Test", lastname="User", email="test1@example.com", password="testpass", faculty="FST") == True
+        assert create_staff(username="testuser", 
+                            firstname="Test", 
+                            lastname="User", 
+                            email="test1@example.com", 
+                            password="testpass", 
+                            faculty="FST") == True
     
     def test_get_staff_by_id(self):
         staff = get_staff_by_id(1)
@@ -72,7 +75,14 @@ class StaffIntegrationTests(unittest.TestCase):
         assert staff is not None
 
     def test_student_search(self):
-        assert create_student(username="student1", UniId="816000000", firstname="Student", lastname="One", email="student1@example.com", password="studentpass", faculty="FST", degree="CS") == True
+        assert create_student(username="student1", 
+                              UniId="816000000", 
+                              firstname="Student", 
+                              lastname="One", 
+                              email="student1@example.com", 
+                              password="studentpass", 
+                              faculty="FST", 
+                              degree="CS") == True
         student = get_student_by_username("student1")
         assert student is not None
         staff = get_staff_by_id(1)
@@ -83,3 +93,44 @@ class StaffIntegrationTests(unittest.TestCase):
         assert found_student.UniId == "816000000"
         assert found_student.faculty == "FST"
         assert found_student.degree == "CS"
+
+    def test_create_review(self):
+        assert create_staff(username="testuser2", 
+                            firstname="Test2", 
+                            lastname="User2", 
+                            email="test2@example.com", 
+                            password="testpass2", 
+                            faculty="FST") == True
+        staff = get_staff_by_id(1)
+        assert staff is not None
+
+        assert create_student(username="student2", 
+                              UniId="816000002", 
+                              firstname="Student2", 
+                              lastname="Two", 
+                              email="student2@example.com", 
+                              password="studentpass2", 
+                              faculty="FST", 
+                              degree="CS") == True
+        student = get_student_by_UniId("816000002")
+        assert student is not None
+
+        assert create_review(staff.id, 
+                             True, 
+                             "816000002", 
+                             5, 
+                             "Great job!") is not None
+
+    def test_get_review(self):
+        review = get_review(1)
+        assert review is not None
+
+    def test_delete_review(self):
+        assert create_review(1, 
+                             True, 
+                             "816000002", 
+                             5, 
+                             "Great job!") is not None
+        review = get_review(2)
+        assert delete_review(review.id) == True
+        assert get_review(2) is None

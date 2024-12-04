@@ -8,7 +8,7 @@ class Student(User):
     UniId = db.Column(db.String(10), nullable=False)
     degree = db.Column(db.String(120), nullable=False)
     full_name = db.Column(db.String(255), nullable=True)
-    karma = db.Column(db.Integer, nullable=True, default=0)  # Default to 0
+    karma = db.Column(db.Integer, nullable=True, default=50)  # Default to 50
 
     __mapper_args__ = {"polymorphic_identity": "student"}
 

@@ -24,13 +24,11 @@ from App.controllers import (
 class StudentUnitTests(unittest.TestCase):
 
     def test_new_student(self):
-        student = Student(username="billy", firstname="Billy", lastname="John", email="billy@example.com", password="billypass", faculty="FST", admittedTerm="2022/2023", UniId="816000000", degree="BSc Computer Science", gpa="3.5")
+        student = Student(username="billy", UniId="816000000", first_name="Billy", last_name="John", email="billy@example.com", password="billypass", faculty="FST", degree="BSc Computer Science", karma=0)
         assert student.username == "billy"
 
     def test_get_json(self):
-        student = Student(username="billy", firstname="Billy", lastname="John", email="billy@example.com", password="billypass", faculty="FST", admittedTerm="2022/2023", UniId="816000000", degree="BSc Computer Science", gpa="3.5")
-        karma = get_karma(student.karmaID)
-        student_json = student.to_json(karma)
+        student = Student(username="billy", UniId="816000000", first_name="Billy", last_name="John", email="billy@example.com", password="billypass", faculty="FST", degree="BSc Computer Science", karma=0)
         print(student_json)
         self.assertDictEqual(student_json, {"studentID": None,
                                             "username": "billy",
