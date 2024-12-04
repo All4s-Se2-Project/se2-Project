@@ -525,9 +525,9 @@ def display_review_cli(review_id):
         print("Failed to display review.")
 
 #testing this command        
-@app.cli.command('review_log', help="Get the review log of a user")
+@app.cli.command('get_all_student_reviews', help="Get the review log of a user")
 @click.argument('student_id', type=int, default=1)
-def review_log_cli(student_id):
+def get_all_student_reviews_cli(student_id):
     stud = Student.query.get(student_id)
     if stud:
         print(f'Review log for Student ID {student_id}:')
