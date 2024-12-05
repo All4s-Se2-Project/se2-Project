@@ -13,7 +13,8 @@ from App.controllers import (
     get_students_by_degree,
     get_students_by_faculty,
     get_all_students_json,
-    update_degree
+    update_degree,
+    get_review_at_time
 )
 
 '''
@@ -86,7 +87,7 @@ class StudentIntegrationTests(unittest.TestCase):
         student = get_student_by_username("billy")
         assert student is not None
 
-    def test_get_studens_by_degree(self):
+    def test_get_students_by_degree(self):
         students = get_students_by_degree("BSc Computer Science")
         assert students != []
 
@@ -106,4 +107,18 @@ class StudentIntegrationTests(unittest.TestCase):
         assert update_degree(1, "BSc Computer Science Special") == True
 
     def test_display_karma(self):
-        assert displayKarma(1) == "Karma Score: 50"
+        assert displayKarma(1) == "Karma Points for Student Billy John (ID: 1): 50"
+
+    '''def test_get_review_at_time(self):
+        review_data = get_review_at_time(self.date_created)
+        expected_data = {
+            "reviewID": self.review.id,
+            "reviewer": f"{self.staff.first_name} {self.staff.last_name}",
+            "studentID": self.student.id,
+            "studentName": f"{self.student.first_name} {self.student.last_name}",
+            "created": self.date_created.strftime("%d-%m-%Y %H:%M"),
+            "points": self.review.points,
+            "details": self.review.details,
+            "rating": self.review.rating,
+        }
+        self.assertEqual(review_data, expected_data)'''

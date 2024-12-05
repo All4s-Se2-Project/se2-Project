@@ -42,18 +42,3 @@ class Student(User):
     def displayKarma(self):
         return f"Karma Points for Student {self.full_name} (ID: {self.id}): {self.karma}"
 
-    def get_review_at_time(self, target_time: datetime):
-        review = Review.query.filter(Review.date_created == target_time).first()
-        if review:
-            return {
-                "reviewID": review.id,
-                "reviewer": f"{review.reviewing_staff.first_name} {review.reviewing_staff.last_name}",
-                "studentID": review.student.id,
-                "studentName": f"{review.student.first_name} {review.student.last_name}",
-                "created": review.date_created.strftime("%d-%m-%Y %H:%M"),
-                "points": review.points,
-                "details": review.details,
-                "rating": review.rating,
-            }
-        else:
-            return None

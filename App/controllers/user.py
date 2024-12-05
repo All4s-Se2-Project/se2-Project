@@ -48,8 +48,20 @@ def get_all_users_json():
     users = User.query.all()
     if not users:
         return []
-    users = [user.to_json() for user in users] 
-    return users
+
+    users_json = []
+    for user in users:
+        user_data = {
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'faculty': user.faculty
+        }
+        users_json.append(user_data)
+
+    return users_json
 
 def update_user_username(id, username):
     user = get_user(id)
