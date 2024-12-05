@@ -29,20 +29,36 @@ def identify_page():
 
 @auth_views.route('/login', methods=['POST'])
 def login_action():
-  data = request.form
-  message="Bad username or password"
-  user = login(data['username'], data['password'])
-  if user:
-    user_type = type(user)
-    print("User type:", user_type)
-    login_user(user)
-    if (user.user_type == "staff"):
-      return redirect("/StaffHome")  # Redirect to student dashboard
-    elif (user.user_type == "student"):
-      return redirect("/StudentHome")  # Redirect to staff dashboard
-    elif (user.user_type == "admin"):
-      return redirect("/admin")
-  return render_template('login.html', message=message)
+    data = request.form
+    message = "Bad username or password"
+    
+    # Authenticate the user
+    user = login(data['username'], data['password'])
+    
+    if user:
+        user_type = type(user)
+        print("User type:", user_type)
+        
+        # Log the user in with Flask-Login
+        login_user(user)
+        
+        # Generate JWT token
+        token = jwt_authenticate(data['username'], data['password'])
+        
+        # Set the JWT token in the cookies (using flask_jwt_extended)
+        if token:
+            response = jsonify({"message": f"Welcome {user.username}"})
+            set_access_cookies(response, token)  # Set JWT token in cookies
+            if user.user_type == "staff":
+                return redirect("/StaffHome")  # Redirect to staff dashboard
+            elif user.user_type == "student":
+                return redirect("/StudentHome")  # Redirect to student dashboard
+            elif user.user_type == "admin":
+                return redirect("/admin")  # Redirect to admin panel
+        else:
+            message = "Failed to generate token"
+    
+    return render_template('login.html', message=message)
 
 
 @auth_views.route('/logout', methods=['GET'])
@@ -73,13 +89,25 @@ def create_user_endpoint():
 
 
 
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import set_access_cookies
+from App.controllers import jwt_authenticate, login
+
+auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
+
 @auth_views.route('/api/login', methods=['POST'])
 def user_login_api():
     data = request.json
     token = jwt_authenticate(data['username'], data['password'])
+
     if not token:
         return jsonify(message='Bad username or password'), 401
-    return jsonify(access_token=token), 200
+
+    # Create the response and set the JWT token in the cookies
+    response = jsonify(access_token=token)
+    set_access_cookies(response, token)  # Set JWT token in cookies for future requests
+
+    return response, 200
 
 
 
@@ -95,14 +123,15 @@ def identify_user_action():
 @auth_views.route('/api/display_karma', methods=['GET'])
 @jwt_required()
 def display_karma():
-    current_user_username = get_jwt_identity()  # Get username from JWT token
+    # Get username from JWT token
+    current_user_username = get_jwt_identity()
     print(f"JWT Identity (Username): {current_user_username}")  # Debugging line
-    user = User.query.filter_by(username=current_user_username).first()
 
+    user = User.query.filter_by(username=current_user_username).first()
+    
     if user is None:
         return jsonify({"message": "User not found"}), 404  # User not found
 
-    # Log user type for debugging
     print(f"User type: {user.user_type}")  # Debugging line
 
     if user.user_type == "student":
