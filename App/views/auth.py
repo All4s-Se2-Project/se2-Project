@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for
-from flask_jwt_extended import jwt_required, current_user as jwt_current_user
+from flask_jwt_extended import get_jwt_identity, jwt_required, current_user as jwt_current_user, set_access_cookies
 from flask_login import login_required, login_user, current_user, logout_user
 
 from .index import index_views
@@ -72,13 +72,15 @@ def create_user_endpoint():
   return jsonify({'message': f"user {data['username']} created"})
 
 
+
 @auth_views.route('/api/login', methods=['POST'])
 def user_login_api():
-  data = request.json
-  token = jwt_authenticate(data['username'], data['password'])
-  if not token:
-    return jsonify(message='bad username or password given'), 401
-  return jsonify(access_token=token)
+    data = request.json
+    token = jwt_authenticate(data['username'], data['password'])
+    if not token:
+        return jsonify(message='Bad username or password'), 401
+    return jsonify(access_token=token), 200
+
 
 
 @auth_views.route('/api/identify', methods=['GET'])
@@ -88,3 +90,29 @@ def identify_user_action():
       'message':
       f"username: {jwt_current_user.username}, id : {jwt_current_user.ID}"
   })
+
+
+@auth_views.route('/api/display_karma', methods=['GET'])
+@jwt_required()
+def display_karma():
+    current_user_username = get_jwt_identity()  # Get username from JWT token
+    print(f"JWT Identity (Username): {current_user_username}")  # Debugging line
+    user = User.query.filter_by(username=current_user_username).first()
+
+    if user is None:
+        return jsonify({"message": "User not found"}), 404  # User not found
+
+    # Log user type for debugging
+    print(f"User type: {user.user_type}")  # Debugging line
+
+    if user.user_type == "student":
+        student = Student.query.filter_by(id=user.id).first()
+        if student:
+            return jsonify({
+                "message": f"Karma Points for Student {student.full_name}",
+                "karma": student.karma
+            }), 200
+        else:
+            return jsonify({"message": "Student not found"}), 404
+    else:
+        return jsonify({"message": "Unauthorized. Only students can access this."}), 403

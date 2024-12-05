@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from App.models import db, Student, Karma
 from App.controllers import (
     create_user,
@@ -177,3 +178,13 @@ def health_check():
 @index_views.route('/images/<path:filename>', methods=['GET'])
 def serve_image(filename):
   return send_from_directory('/workspaces/Info3604_Project/images', filename)
+
+@index_views.route('/identify')
+@jwt_required()
+def display_karma():
+    current_user_username = get_jwt_identity()  # Get username from JWT token
+    print(f"JWT Identity (Username): {current_user_username}")  # Debugging line
+    # user = User.query.filter_by(username=current_user_username).first()
+    return jsonify(current_user_username), 200
+    # if user is None:
+    #     return jsonify({"message": "User not found"}), 404  # User not found
