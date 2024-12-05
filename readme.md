@@ -191,3 +191,47 @@ If you are running into errors in gitpod when updateding your github actions fil
 ## Database Issues
 
 If you are adding models you may need to migrate the database with the commands given in the previous database migration section. Alternateively you can delete you database file.
+
+## All4s CLI Commands
+
+### calculateKarmaCommand
+Commands for calculating karma based on reviews and ratings.
+
+- **execute**: Execute a pending rating command.
+- **calculate_points**: Calculate points for a given star rating.
+- **calculate_karma**: Calculate karma for a student based on review and star rating.
+
+### display_review
+Displays a specific review by its ID.
+
+### get_all_reviews_for_student
+Get the review log of a user by their student ID.
+
+### review_at_time
+Get a review for a user at a specific time.
+
+### review_command
+Commands for managing review commands.
+
+- **execute**: Execute the most recent review command.
+- **log_change**: Log changes for the most recent review command.
+
+### staff
+Commands for staff operations.
+
+- **student_search**: Search for a student by their ID.
+- **delete_review**: Delete a review by its ID.
+- **create_review**: Create a review for a student.
+
+### student
+Commands for managing students.
+
+- **display_karma**: Display karma score for a specific student.
+
+### user_history
+Commands for managing user history.
+
+- **all_history**: Get all history entries for a user.
+- **by_date**: Get user history entries filtered by date.
+- **by_range**: Get user history entries within a date range.
+- **latest_version**: Get the latest history entry for a user.

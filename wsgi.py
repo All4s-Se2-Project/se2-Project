@@ -522,30 +522,16 @@ def cli_delete_review(review_id):
     except Exception as e:
         print(f"Error: {e}")
 
-@staff_cli.command("add_rating", help="Add a rating to a review")
-@click.argument("review_id", type=int)
-@click.argument("rating_value", type=int)
-def cli_add_rating(review_id, rating_value):
-    try:
-        success = add_rating(review_id, rating_value)
-        if success:
-            print(f"Rating added to review {review_id} successfully.")
-        else:
-            print(f"Failed to add rating to review {review_id}.")
-    except Exception as e:
-        print(f"Error: {e}")
-
 @staff_cli.command("create_review")
 @click.argument("staff_id", type=int)
 @click.argument("is_positive", type=bool)
 @click.argument("student_id", type=int)
 @click.argument("rating", type=int)
-@click.argument("points", type=int)
 @click.argument("details", type=str)
-def cli_create_review(staff_id, is_positive, student_id, rating, points, details):
+def cli_create_review(staff_id, is_positive, student_id, rating, details):
     from App.controllers import create_review
     try:
-        review = create_review(staff_id, is_positive, student_id, rating, points, details)
+        review = create_review(staff_id, is_positive, student_id, rating, details)
         print(f"Review created successfully: {review.to_json()}")
     except ValueError as e:
         print(f"Error: {e}")
